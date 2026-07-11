@@ -1,4 +1,4 @@
-package net.zeronexus.quickstackcraft.fabric;
+package net.zeronexus.quickstackcraft.logic.fabric;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -17,10 +17,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * Fabric implementation of FavoritesManager using SavedData for persistence.
- * No external dependency needed (no Cardinal Components for MVP).
- */
 public final class FavoritesManagerImpl {
 
     private FavoritesManagerImpl() {}
@@ -51,7 +47,6 @@ public final class FavoritesManagerImpl {
                 );
             }
         }
-        // Client-side fallback: shouldn't normally be called on client
         return FavoritesSavedData.EMPTY;
     }
 

@@ -13,3 +13,5 @@ run/
 bin/
 libs/
 .architectury-transformer/
+_release/
+/*.jar

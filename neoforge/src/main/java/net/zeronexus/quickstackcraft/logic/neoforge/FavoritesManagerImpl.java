@@ -1,4 +1,4 @@
-package net.zeronexus.quickstackcraft.neoforge;
+package net.zeronexus.quickstackcraft.logic.neoforge;
 
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -12,11 +12,6 @@ import java.util.function.Supplier;
 
 import com.mojang.serialization.Codec;
 
-/**
- * NeoForge implementation of FavoritesManager using player attachments.
- * The @ExpectPlatform in common/FavoritesManager delegates to these static methods.
- * Method signatures must match the common @ExpectPlatform methods exactly.
- */
 public final class FavoritesManagerImpl {
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS =
@@ -30,6 +25,14 @@ public final class FavoritesManagerImpl {
                             list -> (Set<Integer>) new HashSet<>(list),
                             set -> set.stream().sorted().toList()
                     ))
+                    .copyOnDeath()
+                    .build()
+    );
+
+    public static final Supplier<AttachmentType<Boolean>> TUTORIAL_SEEN = ATTACHMENTS.register(
+            "tutorial_seen",
+            () -> AttachmentType.builder(() -> false)
+                    .serialize(Codec.BOOL)
                     .copyOnDeath()
                     .build()
     );

@@ -1,5 +1,6 @@
 package net.zeronexus.quickstackcraft.logic;
 
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.Container;
@@ -66,6 +67,7 @@ public final class ContainerScanner {
 
                     Container container = getContainerFromBlockEntity(level, pos, be, processed);
                     if (container == null) continue;
+                    if (!StorageRecognitionPolicy.accepts(level.getBlockState(pos), be, container)) continue;
 
                     results.add(new ContainerAccess(container, pos, distSq));
                 }
@@ -98,40 +100,62 @@ public final class ContainerScanner {
      * Returns null if the block entity is not a valid container.
      */
     private static Container getContainerFromBlockEntity(Level level, BlockPos pos, BlockEntity be, Set<BlockPos> processed) {
-        if (!(be instanceof Container)) return null;
-
-        // Note: lock code checking requires an accessor mixin (lockKey is private).
-        // Locked containers are rare (adventure maps); skipping this check for now.
-
         BlockState state = level.getBlockState(pos);
 
-        // Handle double chests - only process LEFT and SINGLE to avoid duplicates
+        // Handle vanilla double chests - only process LEFT and SINGLE to avoid duplicates
         if (state.getBlock() instanceof ChestBlock chestBlock) {
             if (state.hasProperty(ChestBlock.TYPE)) {
                 ChestType type = state.getValue(ChestBlock.TYPE);
                 if (type == ChestType.RIGHT) {
                     processed.add(pos);
-                    return null; // The LEFT half will capture the merged inventory
+                    return null;
                 }
             }
-
-            // Get the merged container (handles double chests automatically)
             Container merged = ChestBlock.getContainer(chestBlock, state, level, pos, true);
             if (merged != null) {
-                // Mark both halves as processed
                 processed.add(pos);
                 ChestType type = state.getValue(ChestBlock.TYPE);
                 if (type == ChestType.LEFT) {
-                    BlockPos otherHalf = pos.relative(ChestBlock.getConnectedDirection(state));
-                    processed.add(otherHalf);
+                    processed.add(pos.relative(ChestBlock.getConnectedDirection(state)));
                 }
                 return merged;
             }
             return null;
         }
 
-        processed.add(pos);
-        return (Container) be;
+        // Vanilla Container interface (chests, barrels, hoppers, etc.)
+        if (be instanceof Container c) {
+            processed.add(pos);
+            return c;
+        }
+
+        // Modded containers: try platform-specific capability (IItemHandler on NeoForge)
+        Container capContainer = getContainerFromCapability(level, pos);
+        if (capContainer != null) {
+            processed.add(pos);
+            return capContainer;
+        }
+
+        return null;
+    }
+
+    /**
+     * Platform-specific: try to get a Container from a block via capabilities.
+     * On NeoForge, queries IItemHandler capability and wraps it.
+     * On Fabric, returns null (most Fabric mods implement Container directly).
+     */
+    @ExpectPlatform
+    public static Container getContainerFromCapability(Level level, BlockPos pos) {
+        throw new AssertionError("Not implemented");
+    }
+
+    public static boolean hasItemStorage(Level level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof Container container && container.getContainerSize() > 0) {
+            return true;
+        }
+        Container capability = getContainerFromCapability(level, pos);
+        return capability != null && capability.getContainerSize() > 0;
     }
 
     /**

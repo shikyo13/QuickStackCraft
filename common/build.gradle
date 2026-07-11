@@ -8,4 +8,9 @@ dependencies {
 
     // Architectury API (common module)
     modApi "dev.architectury:architectury:${rootProject.architectury_api_version}"
+
+    // JEI (compile-only, mod works without JEI)
+    modCompileOnlyApi "mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
 }

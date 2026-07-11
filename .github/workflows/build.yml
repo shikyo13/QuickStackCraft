@@ -1,0 +1,36 @@
+name: Build
+
+on:
+  push:
+    branches: ['mc/*']
+  pull_request:
+    branches: ['mc/*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build
+        run: chmod +x gradlew && ./gradlew build
+
+      - name: Collect jars
+        run: ./gradlew collectJars
+
+      - name: Sanitize branch name
+        id: branch
+        run: echo "safe_name=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: jars-${{ steps.branch.outputs.safe_name }}
+          path: quickstackcraft-*.jar

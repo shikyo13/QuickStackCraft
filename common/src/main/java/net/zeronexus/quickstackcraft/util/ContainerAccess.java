@@ -38,6 +38,14 @@ public class ContainerAccess {
         return distanceSq;
     }
 
+    public BlockPos blockPos() {
+        return blockPos;
+    }
+
+    public Entity entity() {
+        return entity;
+    }
+
     public boolean isBlockContainer() {
         return blockPos != null;
     }
@@ -59,14 +67,15 @@ public class ContainerAccess {
      * Count how many of a given item type are in this container (total across all slots).
      */
     public int countItem(ItemStack stack) {
-        int count = 0;
-        for (int i = 0; i < container.getContainerSize(); i++) {
-            ItemStack existing = container.getItem(i);
+        int total = 0;
+        int slot = container.getContainerSize();
+        while (slot > 0) {
+            ItemStack existing = container.getItem(--slot);
             if (!existing.isEmpty() && ItemStack.isSameItemSameComponents(existing, stack)) {
-                count += existing.getCount();
+                total += existing.getCount();
             }
         }
-        return count;
+        return total;
     }
 
     /**
@@ -76,6 +85,14 @@ public class ContainerAccess {
     public ItemStack insertItem(ItemStack stack) {
         if (stack.isEmpty()) return ItemStack.EMPTY;
 
+        if (container instanceof DirectInsertContainer insertionTarget) {
+            return insertionTarget.insertDirect(stack.copy());
+        }
+
+        return insertThroughSlots(stack);
+    }
+
+    private ItemStack insertThroughSlots(ItemStack stack) {
         ItemStack toInsert = stack.copy();
 
         // First pass: fill existing stacks of the same type

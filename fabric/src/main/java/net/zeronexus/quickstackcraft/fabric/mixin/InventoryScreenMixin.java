@@ -1,99 +1,67 @@
 package net.zeronexus.quickstackcraft.fabric.mixin;
 
 import dev.architectury.networking.NetworkManager;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.inventory.Slot;
-import net.zeronexus.quickstackcraft.client.ClientFavoritesCache;
-import net.zeronexus.quickstackcraft.client.ModKeybinds;
-import net.zeronexus.quickstackcraft.network.DumpC2SPacket;
-import net.zeronexus.quickstackcraft.network.FavoriteToggleC2SPacket;
-import net.zeronexus.quickstackcraft.network.QuickStackC2SPacket;
+import net.zeronexus.quickstackcraft.client.InventoryToolbarLayout;
+import net.zeronexus.quickstackcraft.client.QuickStackConfigScreen;
+import net.zeronexus.quickstackcraft.client.UiIcon;
+import net.zeronexus.quickstackcraft.client.UiIconButton;
+import net.zeronexus.quickstackcraft.compat.ExternalSlotLocks;
+import net.zeronexus.quickstackcraft.network.InventoryActionC2SPacket;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.time.Duration;
 
 @Mixin(InventoryScreen.class)
-public abstract class InventoryScreenMixin extends Screen {
+public abstract class InventoryScreenMixin extends AbstractContainerScreen<InventoryMenu> {
 
-    @Shadow protected int leftPos;
-    @Shadow protected int topPos;
-    @Shadow protected InventoryMenu menu;
-
-    @Shadow protected abstract boolean isHovering(Slot slot, double mouseX, double mouseY);
-
-    private InventoryScreenMixin() { super(Component.empty()); }
+    private InventoryScreenMixin() { super(null, null, Component.empty()); }
 
     @Unique private Button quickstackcraft$quickStackButton;
     @Unique private Button quickstackcraft$dumpButton;
+    @Unique private Button quickstackcraft$configButton;
 
     @Inject(method = "init", at = @At("TAIL"))
     private void quickstackcraft$addButtons(CallbackInfo ci) {
-        int btnX = this.leftPos + 126;
-        int btnY = this.topPos + 62;
-        int btnSize = 12;
+        int btnY = InventoryToolbarLayout.buttonY(this.topPos);
+        int btnSize = InventoryToolbarLayout.BUTTON_SIZE;
 
-        quickstackcraft$quickStackButton = Button.builder(Component.literal("Q"), btn -> {
-            NetworkManager.sendToServer(new QuickStackC2SPacket());
-        }).bounds(btnX, btnY, btnSize, btnSize)
-          .tooltip(Tooltip.create(Component.translatable("quickstackcraft.button.quick_stack")))
-          .build();
+        quickstackcraft$quickStackButton = Button.builder(
+                        Component.literal(InventoryToolbarLayout.QUICK_STACK_LABEL),
+                        btn -> NetworkManager.sendToServer(new InventoryActionC2SPacket(
+                                InventoryActionC2SPacket.Action.QUICK_STACK, ExternalSlotLocks.snapshot())))
+                .bounds(InventoryToolbarLayout.buttonX(this.leftPos, 0), btnY, btnSize, btnSize)
+                .build();
+        quickstackcraft$quickStackButton.setTooltip(Tooltip.create(
+                Component.translatable("quickstackcraft.button.quick_stack")));
+        quickstackcraft$quickStackButton.setTooltipDelay(Duration.ofMillis(250));
 
-        quickstackcraft$dumpButton = Button.builder(Component.literal("D"), btn -> {
-            NetworkManager.sendToServer(new DumpC2SPacket());
-        }).bounds(btnX + btnSize + 2, btnY, btnSize, btnSize)
-          .tooltip(Tooltip.create(Component.translatable("quickstackcraft.button.dump_all")))
-          .build();
+        quickstackcraft$dumpButton = Button.builder(
+                        Component.literal(InventoryToolbarLayout.DUMP_LABEL),
+                        btn -> NetworkManager.sendToServer(new InventoryActionC2SPacket(
+                                InventoryActionC2SPacket.Action.DUMP, ExternalSlotLocks.snapshot())))
+                .bounds(InventoryToolbarLayout.buttonX(this.leftPos, 1), btnY, btnSize, btnSize)
+                .build();
+        quickstackcraft$dumpButton.setTooltip(Tooltip.create(
+                Component.translatable("quickstackcraft.button.dump_all")));
+        quickstackcraft$dumpButton.setTooltipDelay(Duration.ofMillis(250));
+
+        quickstackcraft$configButton = new UiIconButton(
+                InventoryToolbarLayout.buttonX(this.leftPos, 2), btnY, btnSize, UiIcon.SETTINGS,
+                Component.translatable("quickstackcraft.button.config"),
+                btn -> QuickStackConfigScreen.open(this));
 
         this.addRenderableWidget(quickstackcraft$quickStackButton);
         this.addRenderableWidget(quickstackcraft$dumpButton);
-    }
-
-    @Inject(method = "render", at = @At("TAIL"))
-    private void quickstackcraft$renderFavorites(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        for (Slot slot : this.menu.slots) {
-            if (slot.container instanceof Inventory && ClientFavoritesCache.isFavorited(slot.getContainerSlot())) {
-                int x = this.leftPos + slot.x;
-                int y = this.topPos + slot.y;
-                graphics.fill(x, y, x + 16, y + 16, 0x40FFD700);
-            }
-        }
-    }
-
-    @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-    private void quickstackcraft$onMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        if (button == 0 && Screen.hasAltDown()) {
-            for (Slot slot : this.menu.slots) {
-                if (slot.container instanceof Inventory && this.isHovering(slot, mouseX, mouseY)) {
-                    int slotIndex = slot.getContainerSlot();
-                    if (slotIndex >= 0 && slotIndex < 36) {
-                        NetworkManager.sendToServer(new FavoriteToggleC2SPacket(slotIndex));
-                        cir.setReturnValue(true);
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
-    private void quickstackcraft$onKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-        if (ModKeybinds.QUICK_STACK.matches(keyCode, scanCode)) {
-            NetworkManager.sendToServer(new QuickStackC2SPacket());
-            cir.setReturnValue(true);
-        } else if (ModKeybinds.DUMP_ALL.matches(keyCode, scanCode)) {
-            NetworkManager.sendToServer(new DumpC2SPacket());
-            cir.setReturnValue(true);
-        }
+        this.addRenderableWidget(quickstackcraft$configButton);
     }
 }
