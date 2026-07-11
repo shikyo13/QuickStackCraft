@@ -1,0 +1,50 @@
+name: Monitored repository review
+
+on:
+  schedule:
+    - cron: '23 10 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: monitored-repository-review
+  cancel-in-progress: false
+
+jobs:
+  review:
+    if: github.repository == 'shikyo13/QuickStackCraft'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify monitor configuration
+        env:
+          MONITORED_REPOSITORY: ${{ secrets.QSC_MONITORED_REPOSITORY }}
+          BASELINE_1211: ${{ secrets.QSC_MONITORED_1211_BASELINE }}
+          BASELINE_1214: ${{ secrets.QSC_MONITORED_1214_BASELINE }}
+        run: |
+          test -n "$MONITORED_REPOSITORY"
+          test -n "$BASELINE_1211"
+          test -n "$BASELINE_1214"
+
+      - name: Review new commits and implementation similarity
+        env:
+          MONITORED_REPOSITORY: ${{ secrets.QSC_MONITORED_REPOSITORY }}
+          BASELINE_1211: ${{ secrets.QSC_MONITORED_1211_BASELINE }}
+          BASELINE_1214: ${{ secrets.QSC_MONITORED_1214_BASELINE }}
+        run: >-
+          python tools/license_monitor.py
+          --repository "$MONITORED_REPOSITORY"
+          --baseline "mc/1.21.1=$BASELINE_1211"
+          --baseline "mc/1.21.4=$BASELINE_1214"
+          --upstream "mc/1.21.1=origin/mc/1.21.1"
+          --upstream "mc/1.21.4=origin/mc/1.21.4"
+          --summary "$GITHUB_STEP_SUMMARY"
