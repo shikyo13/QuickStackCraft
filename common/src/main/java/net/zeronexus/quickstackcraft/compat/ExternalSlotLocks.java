@@ -28,9 +28,13 @@ public final class ExternalSlotLocks {
     public static boolean detected() {
         if (detected == null) {
             try {
-                Class.forName(LOCK_SERVICE, false, ExternalSlotLocks.class.getClassLoader());
+                ClassLoader loader = ExternalSlotLocks.class.getClassLoader();
+                Class<?> registryType = Class.forName(COMPONENT_REGISTRY, false, loader);
+                Class<?> serviceType = Class.forName(LOCK_SERVICE, false, loader);
+                registryType.getMethod("getComponent", Class.class);
+                serviceType.getMethod("isLockedSlotRaw", int.class);
                 detected = true;
-            } catch (ClassNotFoundException | LinkageError ignored) {
+            } catch (ReflectiveOperationException | LinkageError | SecurityException ignored) {
                 detected = false;
             }
         }
@@ -54,6 +58,7 @@ public final class ExternalSlotLocks {
         } catch (ClassNotFoundException | NoSuchMethodException | LinkageError incompatibleApi) {
             permanentlyUnavailable = true;
             api = null;
+            detected = false;
         } catch (ReflectiveOperationException | RuntimeException notReady) {
             api = null;
         }

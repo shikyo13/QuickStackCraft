@@ -67,7 +67,10 @@ public final class InventoryTransferService {
             DepositMode mode) {
         List<SourceSlot> sources = new ArrayList<>(menuSlots.size());
         for (Slot slot : menuSlots) {
-            sources.add(new SourceSlot(slot::getItem, slot::remove, () -> slot.mayPickup(player)));
+            sources.add(new SourceSlot(
+                    slot::getItem,
+                    amount -> consumeMenuSlot(player, slot, amount),
+                    () -> slot.mayPickup(player)));
         }
         return move(sources, destinations, mode);
     }
@@ -130,6 +133,13 @@ public final class InventoryTransferService {
         ItemStack stack = inventory.getItem(slot);
         stack.shrink(amount);
         inventory.setItem(slot, stack.isEmpty() ? ItemStack.EMPTY : stack);
+    }
+
+    private static void consumeMenuSlot(Player player, Slot slot, int amount) {
+        ItemStack removed = slot.remove(amount);
+        if (!removed.isEmpty()) {
+            slot.onTake(player, removed);
+        }
     }
 
     private static TransferResult summarize(int movedItems, Set<ContainerAccess> destinations) {
