@@ -297,14 +297,15 @@ def monitored_branches() -> dict[str, str]:
     output = run_git(
         "for-each-ref",
         f"refs/remotes/{REMOTE_NAME}",
-        "--format=%(refname:short) %(objectname)",
+        "--format=%(refname) %(objectname)",
     )
     branches: dict[str, str] = {}
+    prefix = f"refs/remotes/{REMOTE_NAME}/"
     for line in output.splitlines():
         reference, commit = line.split(maxsplit=1)
-        branch = reference.removeprefix(f"{REMOTE_NAME}/")
-        if branch != "HEAD":
-            branches[branch] = commit
+        if reference == f"{prefix}HEAD":
+            continue
+        branches[reference.removeprefix(prefix)] = commit
     return branches
 
 
