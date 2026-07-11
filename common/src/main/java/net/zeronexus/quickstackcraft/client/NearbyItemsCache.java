@@ -15,6 +15,7 @@ public final class NearbyItemsCache {
 
     private static Map<Item, Integer> nearbyItems = Map.of();
     private static long lastQueryTick = -100;
+    private static long revision = 0;
     private static final int REFRESH_INTERVAL = 20; // 1 second
 
     private NearbyItemsCache() {}
@@ -27,6 +28,7 @@ public final class NearbyItemsCache {
     /** Update the cache with fresh data from the server. */
     public static void update(Map<Item, Integer> items) {
         nearbyItems = new HashMap<>(items);
+        revision++;
     }
 
     /** Check if the cache is stale and needs a server refresh. */
@@ -44,9 +46,15 @@ public final class NearbyItemsCache {
         nearbyItems.forEach(action);
     }
 
+    /** Monotonic value bumped whenever nearby item data changes on the client. */
+    public static long revision() {
+        return revision;
+    }
+
     /** Clear cache (e.g., when menu closes). */
     public static void clear() {
         nearbyItems = Map.of();
         lastQueryTick = -100;
+        revision++;
     }
 }

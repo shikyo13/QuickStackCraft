@@ -1,0 +1,177 @@
+QuickStackCraft Source Available License
+Version 1.0
+
+Copyright (c) 2026 ZeroTheAbsolute. All rights reserved.
+
+This is a proprietary source-available license. It is not an open-source
+license.
+
+1. Definitions
+
+"Software" means the QuickStack & Craft source code, documentation, original
+assets, and compiled files distributed with this license.
+
+"Licensor" means ZeroTheAbsolute.
+
+"Official Release" means an unmodified compiled release published by the
+Licensor through an account or project page controlled by the Licensor.
+
+"Official Distribution Channel" means a CurseForge, Modrinth, GitHub, or other
+distribution account or project page controlled by the Licensor.
+
+"Fork" means any repository, project, build, or other work that copies or is
+derived from any copyrightable portion of the Software. Independent software
+that does not copy or adapt a copyrightable portion of the Software is not a
+Fork.
+
+"Public Distribution" means making source code, compiled files, or other copies
+available to any third party, whether publicly or to a limited group, by any
+method. This includes publishing, sharing, selling, sublicensing, hosting,
+mirroring, reuploading, or operating a public project page or repository.
+
+"Written Authorization" means explicit written permission issued by the
+Licensor through a communication channel publicly identified with the Licensor.
+The permission must identify the authorized person or organization and the
+specific repository, project, distribution, or use being authorized.
+
+"Authorized Fork" means a Fork expressly permitted by Written Authorization.
+
+2. Limited Permission
+
+Subject to every term of this license, the Licensor grants you a limited,
+non-exclusive, non-transferable, non-sublicensable license to:
+
+a. Download, install, and use Official Releases for personal play and on
+   multiplayer servers.
+
+b. Make reasonable backup copies of Official Releases for your own use.
+
+c. Privately download or clone the source code and read it for security review,
+   compatibility research, contribution preparation, or personal learning.
+
+d. Make and use private local modifications for your own personal use, provided
+   that neither the modifications nor resulting builds are shared, published,
+   distributed, or made available to any third party.
+
+No other permission is granted except through Written Authorization.
+
+3. Modpacks
+
+A modpack may include QuickStack & Craft only by referencing or depending on an
+Official Release through an Official Distribution Channel. A modpack may not
+bundle, rehost, mirror, or redistribute an Official Release or a modified build
+without Written Authorization.
+
+4. Forks and Redistribution
+
+You may not create, maintain, or make available a public Fork, or make any
+Public Distribution of the Software, without Written Authorization. This
+restriction includes, without limitation:
+
+a. Public or shared source-code forks and repositories.
+
+b. Modified or unmodified compiled builds.
+
+c. Competing or replacement mod pages and projects.
+
+d. Mirrors, archives, reuploads, and alternate download links.
+
+e. Sale, sublicensing, commercial distribution, or distribution bundled with a
+   paid product or service.
+
+Attribution, source availability, submitting or accepting a Contribution,
+merely opening or participating in a pull request or issue, a general invitation
+to collaborate, prior dealings, silence, or delayed enforcement does not
+constitute Written Authorization.
+
+Written Authorization is limited to the person or organization, Fork, versions,
+distribution channels, purposes, duration, and other conditions it expressly
+identifies. It is non-transferable and does not permit sublicensing or further
+forks unless it explicitly says otherwise. Authorization for one version does
+not authorize use of later versions.
+
+Unless Written Authorization says otherwise, an Authorized Fork must:
+
+a. Preserve all copyright, license, attribution, and provenance notices.
+
+b. Clearly identify itself as unofficial and state that it is not endorsed by
+   or affiliated with the Licensor.
+
+c. Prominently describe its modifications.
+
+d. Use a distinct project name, icon, branding, and project page.
+
+e. Comply with this license and every condition in its Written Authorization.
+
+5. Hosting Platform Rights
+
+A hosting platform may grant its users limited rights directly under that
+platform's mandatory terms. Any such rights are separate from this license and
+are limited to the platform and scope stated in those terms. They do not grant
+permission to publish releases, distribute builds, create third-party mod pages,
+rehost the Software, sublicense it, or use the Licensor's branding. Nothing in
+this license expands any right granted directly by a hosting platform.
+
+6. Ownership and Branding
+
+The Software is licensed, not sold. The Licensor and applicable contributors
+retain their respective ownership and intellectual-property rights. All rights
+not expressly granted are reserved.
+
+No trademark or branding rights are granted. The names "QuickStack & Craft" and
+"QuickStackCraft," the project logos, icons, and other identifying branding may
+be used only to truthfully refer to an Official Release, unless Written
+Authorization expressly permits another use.
+
+7. Contributions
+
+"Contribution" means code, documentation, artwork, or other material
+intentionally submitted to the official project for possible inclusion.
+
+By submitting a Contribution, you represent that you have the right to grant
+the permissions in this section. You retain copyright in your original
+Contribution, but grant the Licensor a perpetual, worldwide, non-exclusive,
+royalty-free, irrevocable license to use, reproduce, modify, distribute,
+publicly display, publicly perform, sublicense, and relicense the Contribution
+as part of or in connection with QuickStack & Craft.
+
+Submitting a Contribution does not authorize you to create or distribute a Fork.
+
+8. Termination
+
+Any permission granted to you under this license terminates automatically if
+you violate its terms. After termination, you must stop using and distributing
+the Software and delete every copy in your possession or control, except copies
+you are legally required to retain. The Licensor may reinstate permission only
+in writing.
+
+Sections 6, 7, 9, 10, and 11 survive termination.
+
+9. Disclaimer of Warranty
+
+THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE, TITLE, AND NON-INFRINGEMENT. YOU ACCEPT ALL RISK ARISING FROM USE OF THE
+SOFTWARE.
+
+10. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE LICENSOR WILL NOT BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, CONSEQUENTIAL, OR OTHER
+DAMAGES ARISING FROM OR RELATED TO THE SOFTWARE OR THIS LICENSE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGES.
+
+11. Scope and Earlier Versions
+
+This license applies only to a version or copy of the Software that includes
+this license text. An earlier version remains governed by the license that
+accompanied that earlier version. Nothing in this license revokes permissions
+validly granted for an earlier version.
+
+Third-party components and materials identified by their own copyright or
+license notices remain governed by those notices. This license does not grant
+rights in third-party material.
+
+If any provision of this license is held unenforceable, that provision will be
+enforced to the maximum extent permitted and the remaining provisions will
+continue in effect.

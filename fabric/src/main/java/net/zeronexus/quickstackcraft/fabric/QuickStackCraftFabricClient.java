@@ -8,8 +8,7 @@ import net.zeronexus.quickstackcraft.client.ModKeybinds;
 public class QuickStackCraftFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        KeyBindingHelper.registerKeyBinding(ModKeybinds.QUICK_STACK);
-        KeyBindingHelper.registerKeyBinding(ModKeybinds.DUMP_ALL);
+        ModKeybinds.all().forEach(KeyBindingHelper::registerKeyBinding);
         QuickStackCraft.initClient();
     }
 }

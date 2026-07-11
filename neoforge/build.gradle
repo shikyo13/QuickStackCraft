@@ -7,6 +7,13 @@ architectury {
     neoForge()
 }
 
+loom {
+    mixin {
+        useLegacyMixinAp = true
+        add(sourceSets.main, "quickstackcraft-neoforge-refmap.json")
+    }
+}
+
 configurations {
     common {
         canBeResolved = true
@@ -34,6 +41,9 @@ dependencies {
 
     // JEI (compile-only)
     modCompileOnlyApi "mezz.jei:jei-${rootProject.minecraft_version}-neoforge-api:${rootProject.jei_version}"
+
+    // EMI (compile-only)
+    modCompileOnlyApi "dev.emi:emi-neoforge:${rootProject.emi_version}:api"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive = false }
     shadowBundle project(path: ":common", configuration: "transformProductionNeoForge")

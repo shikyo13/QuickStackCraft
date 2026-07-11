@@ -9,15 +9,14 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.zeronexus.quickstackcraft.network.CraftFromNearbyC2SPacket;
+import net.zeronexus.quickstackcraft.compat.ExternalSlotLocks;
+import net.zeronexus.quickstackcraft.network.RecipeTransferC2SPacket;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -50,14 +49,16 @@ public class CraftFromNearbyTransferHandler implements IRecipeTransferHandler<In
             IRecipeSlotsView recipeSlots, Player player,
             boolean maxTransfer, boolean doTransfer) {
 
-        List<ItemStack> ingredients = TransferHelper.extractIngredients(recipeSlots);
+        var ingredients = JeiTransferSupport.readIngredientChoices(recipeSlots);
 
         if (!doTransfer) {
-            return TransferHelper.checkAvailability(ingredients, player);
+            return JeiTransferSupport.availabilityStatus(ingredients, player);
         }
 
         LOGGER.info("[QuickStackCraft] Craft from nearby (inventory): recipe={}", recipe.id());
-        NetworkManager.sendToServer(new CraftFromNearbyC2SPacket(ingredients));
+        NetworkManager.sendToServer(new RecipeTransferC2SPacket(
+                menu.containerId, recipe.id(), maxTransfer,
+                ExternalSlotLocks.snapshot()));
         return null;
     }
 }

@@ -11,4 +11,9 @@ dependencies {
 
     // JEI (compile-only, mod works without JEI)
     modCompileOnlyApi "mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}"
+
+    // EMI (compile-only, mod works without EMI)
+    modCompileOnly "dev.emi:emi-xplat-intermediary:${rootProject.emi_version}:api"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
 }

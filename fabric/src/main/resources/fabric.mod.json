@@ -10,8 +10,21 @@
     "icon": "icon.png",
     "environment": "*",
     "entrypoints": {
-        "main": ["net.zeronexus.quickstackcraft.fabric.QuickStackCraftFabric"],
-        "client": ["net.zeronexus.quickstackcraft.fabric.QuickStackCraftFabricClient"]
+        "modmenu": [
+            "net.zeronexus.quickstackcraft.fabric.client.ModMenuIntegration"
+        ],
+        "emi": [
+            "net.zeronexus.quickstackcraft.fabric.compat.emi.QuickStackCraftEmiPlugin"
+        ],
+        "jei_mod_plugin": [
+            "net.zeronexus.quickstackcraft.fabric.compat.jei.QuickStackCraftJeiPlugin"
+        ],
+        "client": [
+            "net.zeronexus.quickstackcraft.fabric.QuickStackCraftFabricClient"
+        ],
+        "main": [
+            "net.zeronexus.quickstackcraft.fabric.QuickStackCraftFabric"
+        ]
     },
     "mixins": [
         "quickstackcraft-common.mixins.json",
@@ -20,8 +33,11 @@
     "depends": {
         "fabricloader": ">=${fabric_loader_version}",
         "fabric-api": "*",
-        "minecraft": "~${minecraft_version}",
+        "minecraft": "${minecraft_version}",
         "architectury": ">=${architectury_api_version}",
         "java": ">=${java_version}"
+    },
+    "suggests": {
+        "modmenu": "*"
     }
 }

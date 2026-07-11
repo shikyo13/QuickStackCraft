@@ -29,8 +29,14 @@ dependencies {
     // Architectury API (Fabric)
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_api_version}"
 
+    // Optional Mod Menu entry point for the built-in settings screen
+    modCompileOnly "com.terraformersmc:modmenu:${rootProject.modmenu_version}"
+
     // JEI (compile-only)
     modCompileOnlyApi "mezz.jei:jei-${rootProject.minecraft_version}-fabric-api:${rootProject.jei_version}"
+
+    // EMI (compile-only)
+    modCompileOnlyApi "dev.emi:emi-fabric:${rootProject.emi_version}:api"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive = false }
     shadowBundle project(path: ":common", configuration: "transformProductionFabric")

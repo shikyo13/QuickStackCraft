@@ -29,6 +29,14 @@ public final class FavoritesManagerImpl {
                     .build()
     );
 
+    public static final Supplier<AttachmentType<Boolean>> TUTORIAL_SEEN = ATTACHMENTS.register(
+            "tutorial_seen",
+            () -> AttachmentType.builder(() -> false)
+                    .serialize(Codec.BOOL)
+                    .copyOnDeath()
+                    .build()
+    );
+
     private FavoritesManagerImpl() {}
 
     public static boolean isFavorited(Player player, int slot) {

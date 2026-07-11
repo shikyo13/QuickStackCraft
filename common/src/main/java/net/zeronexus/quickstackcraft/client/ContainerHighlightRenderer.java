@@ -10,77 +10,90 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.zeronexus.quickstackcraft.logic.StorageListState;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.List;
 
-/**
- * Client-side renderer for highlighting containers that received items.
- * Stores highlight targets with expiry timestamps and renders gold outlines.
- */
 public final class ContainerHighlightRenderer {
 
-    private static final long HIGHLIGHT_DURATION_MS = 3000;
-    private static final float R = 1.0f, G = 0.84f, B = 0.0f, A = 0.8f; // Gold
-
-    private static final List<BlockHighlight> blockHighlights = new ArrayList<>();
-    private static final List<EntityHighlight> entityHighlights = new ArrayList<>();
+    private static final Collection<BlockHighlight> blockHighlights = new ArrayDeque<>();
+    private static final Collection<EntityHighlight> entityHighlights = new ArrayDeque<>();
+    private static ListStateHighlight listStateHighlight;
 
     private ContainerHighlightRenderer() {}
 
     public static void onHighlightReceived(List<BlockPos> positions, List<Integer> entityIds) {
-        long expiry = System.currentTimeMillis() + HIGHLIGHT_DURATION_MS;
+        long expiry = System.currentTimeMillis() + ClientPreferences.outlineLifetimeMs();
         blockHighlights.clear();
         entityHighlights.clear();
-        for (BlockPos pos : positions) {
-            blockHighlights.add(new BlockHighlight(pos, expiry));
-        }
-        for (int id : entityIds) {
-            entityHighlights.add(new EntityHighlight(id, expiry));
-        }
+        positions.forEach(position -> blockHighlights.add(new BlockHighlight(position, expiry)));
+        entityIds.forEach(entityId -> entityHighlights.add(new EntityHighlight(entityId, expiry)));
+    }
+
+    public static void onListStateFeedback(BlockPos position, StorageListState state) {
+        listStateHighlight = new ListStateHighlight(
+                position.immutable(), state, System.currentTimeMillis() + 2500L);
     }
 
     public static void tick() {
         long now = System.currentTimeMillis();
-        blockHighlights.removeIf(h -> now >= h.expiry);
-        entityHighlights.removeIf(h -> now >= h.expiry);
+        blockHighlights.removeIf(highlight -> now >= highlight.expiry);
+        entityHighlights.removeIf(highlight -> now >= highlight.expiry);
+        if (listStateHighlight != null && now >= listStateHighlight.expiry) {
+            listStateHighlight = null;
+        }
     }
 
     public static boolean hasHighlights() {
-        return !blockHighlights.isEmpty() || !entityHighlights.isEmpty();
+        return !blockHighlights.isEmpty() || !entityHighlights.isEmpty() || listStateHighlight != null;
     }
 
-    /**
-     * Called from LevelRendererMixin after world rendering to draw outlines.
-     */
     public static void renderHighlights(PoseStack poseStack, MultiBufferSource bufferSource, Vec3 cameraPos) {
-        if (!hasHighlights()) return;
-
-        VertexConsumer lines = bufferSource.getBuffer(RenderType.lines());
-
-        for (BlockHighlight h : blockHighlights) {
-            AABB box = new AABB(h.pos).inflate(0.002); // Slight inflate to avoid z-fighting
-            LevelRenderer.renderLineBox(poseStack, lines,
-                    box.minX - cameraPos.x, box.minY - cameraPos.y, box.minZ - cameraPos.z,
-                    box.maxX - cameraPos.x, box.maxY - cameraPos.y, box.maxZ - cameraPos.z,
-                    R, G, B, A);
+        if (!hasHighlights()) {
+            return;
         }
 
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.level != null) {
-            for (EntityHighlight h : entityHighlights) {
-                Entity entity = mc.level.getEntity(h.entityId);
+        VertexConsumer lines = bufferSource.getBuffer(RenderType.lines());
+        float[] color = StorageHighlightPalette.destinationRgb();
+        float alpha = (float) Math.max(0.0D, Math.min(1.0D, ClientPreferences.outlineOpacity()));
+
+        for (BlockHighlight highlight : blockHighlights) {
+            renderBox(poseStack, lines, new AABB(highlight.pos).inflate(0.002), cameraPos, color, alpha);
+        }
+
+        ListStateHighlight activeListState = listStateHighlight;
+        if (activeListState != null) {
+            renderBox(poseStack, lines, new AABB(activeListState.pos).inflate(0.006), cameraPos,
+                    StorageHighlightPalette.listStateRgb(activeListState.state), 1.0F);
+        }
+
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level != null) {
+            for (EntityHighlight highlight : entityHighlights) {
+                Entity entity = minecraft.level.getEntity(highlight.entityId);
                 if (entity != null) {
-                    AABB box = entity.getBoundingBox().inflate(0.002);
-                    LevelRenderer.renderLineBox(poseStack, lines,
-                            box.minX - cameraPos.x, box.minY - cameraPos.y, box.minZ - cameraPos.z,
-                            box.maxX - cameraPos.x, box.maxY - cameraPos.y, box.maxZ - cameraPos.z,
-                            R, G, B, A);
+                    renderBox(poseStack, lines, entity.getBoundingBox().inflate(0.002), cameraPos, color, alpha);
                 }
             }
         }
     }
 
+    private static void renderBox(
+            PoseStack poseStack,
+            VertexConsumer lines,
+            AABB box,
+            Vec3 cameraPos,
+            float[] color,
+            float alpha) {
+        LevelRenderer.renderLineBox(poseStack, lines,
+                box.minX - cameraPos.x, box.minY - cameraPos.y, box.minZ - cameraPos.z,
+                box.maxX - cameraPos.x, box.maxY - cameraPos.y, box.maxZ - cameraPos.z,
+                color[0], color[1], color[2], alpha);
+    }
+
     private record BlockHighlight(BlockPos pos, long expiry) {}
     private record EntityHighlight(int entityId, long expiry) {}
+    private record ListStateHighlight(BlockPos pos, StorageListState state, long expiry) {}
 }

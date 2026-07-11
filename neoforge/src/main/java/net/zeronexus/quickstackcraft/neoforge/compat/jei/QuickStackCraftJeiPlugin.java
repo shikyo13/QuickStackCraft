@@ -2,14 +2,11 @@ package net.zeronexus.quickstackcraft.neoforge.compat.jei;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.zeronexus.quickstackcraft.QuickStackCraft;
-import net.zeronexus.quickstackcraft.compat.jei.CraftFromNearbyCraftingTransferHandler;
-import net.zeronexus.quickstackcraft.compat.jei.CraftFromNearbyTransferHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.zeronexus.quickstackcraft.compat.jei.JeiPluginSetup;
 
 /**
  * NeoForge-side JEI plugin entry point. Must be in the platform module
@@ -18,27 +15,18 @@ import org.slf4j.LoggerFactory;
 @JeiPlugin
 public class QuickStackCraftJeiPlugin implements IModPlugin {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("QuickStackCraft-JEI");
-    private static final ResourceLocation PLUGIN_ID =
-            ResourceLocation.fromNamespaceAndPath(QuickStackCraft.MOD_ID, "jei_plugin");
-
     @Override
     public ResourceLocation getPluginUid() {
-        return PLUGIN_ID;
+        return ResourceLocation.fromNamespaceAndPath(QuickStackCraft.MOD_ID, "jei");
     }
 
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-        LOGGER.info("[QuickStackCraft] Registering craft-from-nearby transfer handlers (InventoryMenu + CraftingMenu)");
-        // Override JEI's default PlayerRecipeTransferHandler (2x2 player inventory grid)
-        registration.addRecipeTransferHandler(
-                new CraftFromNearbyTransferHandler(),
-                RecipeTypes.CRAFTING
-        );
-        // Override JEI's default CraftingRecipeTransferHandler (3x3 crafting table)
-        registration.addRecipeTransferHandler(
-                new CraftFromNearbyCraftingTransferHandler(),
-                RecipeTypes.CRAFTING
-        );
+        JeiPluginSetup.registerCrafting(registration);
+    }
+
+    @Override
+    public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+        JeiPluginSetup.registerSettingsIntegration(registration);
     }
 }

@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Client-side cache of favorited slot indices.
+ * Client-side cache of native locked slot indices.
  * Updated by FavoriteSyncS2CPacket from server.
- * Used for rendering the gold overlay on favorited slots.
+ * The legacy class name is retained so existing save and packet identifiers stay compatible.
  */
 public final class ClientFavoritesCache {
 

@@ -7,73 +7,93 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.zeronexus.quickstackcraft.util.DirectInsertContainer;
 
 /**
- * NeoForge implementation: queries IItemHandler capability for modded containers
- * (Sophisticated Storage, Iron Chests, etc.) and wraps them as Container.
+ * Bridges NeoForge item-handler capabilities into the common nearby-storage path.
  */
 public final class ContainerScannerImpl {
 
     private ContainerScannerImpl() {}
 
     public static Container getContainerFromCapability(Level level, BlockPos pos) {
-        IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
-        if (handler != null && handler.getSlots() > 0) {
-            return new ItemHandlerContainer(handler);
-        }
-        return null;
+        IItemHandler capability = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+        return capability == null || capability.getSlots() == 0
+                ? null
+                : new CapabilityContainerView(capability);
     }
 
-    /**
-     * Adapts IItemHandler to Container interface for use with ContainerAccess.
-     */
-    private static class ItemHandlerContainer implements Container {
-        private final IItemHandler handler;
+    private static final class CapabilityContainerView implements Container, DirectInsertContainer {
+        private final IItemHandler capability;
 
-        ItemHandlerContainer(IItemHandler handler) {
-            this.handler = handler;
+        private CapabilityContainerView(IItemHandler capability) {
+            this.capability = capability;
+        }
+
+        @Override
+        public ItemStack insertDirect(ItemStack offered) {
+            ItemStack remainder = offered.copy();
+            for (int index = 0; index < capability.getSlots() && !remainder.isEmpty(); index++) {
+                remainder = capability.insertItem(index, remainder, false);
+            }
+            return remainder.isEmpty() ? ItemStack.EMPTY : remainder;
         }
 
         @Override
         public int getContainerSize() {
-            return handler.getSlots();
+            return capability.getSlots();
         }
 
         @Override
         public boolean isEmpty() {
-            for (int i = 0; i < handler.getSlots(); i++) {
-                if (!handler.getStackInSlot(i).isEmpty()) return false;
+            for (int index = 0; index < capability.getSlots(); index++) {
+                if (!capability.getStackInSlot(index).isEmpty()) {
+                    return false;
+                }
             }
             return true;
         }
 
         @Override
-        public ItemStack getItem(int slot) {
-            return handler.getStackInSlot(slot);
+        public ItemStack getItem(int index) {
+            return valid(index) ? capability.getStackInSlot(index) : ItemStack.EMPTY;
         }
 
         @Override
-        public ItemStack removeItem(int slot, int amount) {
-            return handler.extractItem(slot, amount, false);
+        public ItemStack removeItem(int index, int amount) {
+            return valid(index) && amount > 0
+                    ? capability.extractItem(index, amount, false)
+                    : ItemStack.EMPTY;
         }
 
         @Override
-        public ItemStack removeItemNoUpdate(int slot) {
-            return handler.extractItem(slot, handler.getStackInSlot(slot).getCount(), false);
+        public ItemStack removeItemNoUpdate(int index) {
+            return valid(index)
+                    ? capability.extractItem(index, capability.getStackInSlot(index).getCount(), false)
+                    : ItemStack.EMPTY;
         }
 
         @Override
-        public void setItem(int slot, ItemStack stack) {
-            // Extract existing, then insert new
-            handler.extractItem(slot, handler.getStackInSlot(slot).getCount(), false);
-            if (!stack.isEmpty()) {
-                handler.insertItem(slot, stack, false);
+        public void setItem(int index, ItemStack replacement) {
+            if (!valid(index)) {
+                return;
+            }
+            ItemStack existing = capability.getStackInSlot(index);
+            capability.extractItem(index, existing.getCount(), false);
+            if (!replacement.isEmpty()) {
+                capability.insertItem(index, replacement.copy(), false);
+            }
+        }
+
+        @Override
+        public void clearContent() {
+            for (int index = 0; index < capability.getSlots(); index++) {
+                removeItemNoUpdate(index);
             }
         }
 
         @Override
         public void setChanged() {
-            // No-op: IItemHandler implementations handle their own dirty marking
         }
 
         @Override
@@ -81,11 +101,8 @@ public final class ContainerScannerImpl {
             return true;
         }
 
-        @Override
-        public void clearContent() {
-            for (int i = 0; i < handler.getSlots(); i++) {
-                handler.extractItem(i, handler.getStackInSlot(i).getCount(), false);
-            }
+        private boolean valid(int index) {
+            return index >= 0 && index < capability.getSlots();
         }
     }
 }

@@ -67,6 +67,7 @@ public final class ContainerScanner {
 
                     Container container = getContainerFromBlockEntity(level, pos, be, processed);
                     if (container == null) continue;
+                    if (!StorageRecognitionPolicy.accepts(level.getBlockState(pos), be, container)) continue;
 
                     results.add(new ContainerAccess(container, pos, distSq));
                 }
@@ -146,6 +147,15 @@ public final class ContainerScanner {
     @ExpectPlatform
     public static Container getContainerFromCapability(Level level, BlockPos pos) {
         throw new AssertionError("Not implemented");
+    }
+
+    public static boolean hasItemStorage(Level level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof Container container && container.getContainerSize() > 0) {
+            return true;
+        }
+        Container capability = getContainerFromCapability(level, pos);
+        return capability != null && capability.getContainerSize() > 0;
     }
 
     /**
