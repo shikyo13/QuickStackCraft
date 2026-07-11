@@ -98,8 +98,11 @@ public class ContainerAccess {
         // First pass: fill existing stacks of the same type
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack slot = container.getItem(i);
-            if (!slot.isEmpty() && ItemStack.isSameItemSameComponents(slot, toInsert)) {
-                int space = slot.getMaxStackSize() - slot.getCount();
+            if (!slot.isEmpty()
+                    && ItemStack.isSameItemSameComponents(slot, toInsert)
+                    && container.canPlaceItem(i, toInsert)) {
+                int limit = Math.min(slot.getMaxStackSize(), container.getMaxStackSize(toInsert));
+                int space = limit - slot.getCount();
                 if (space > 0) {
                     int transfer = Math.min(space, toInsert.getCount());
                     slot.grow(transfer);
@@ -112,8 +115,12 @@ public class ContainerAccess {
 
         // Second pass: fill empty slots
         for (int i = 0; i < container.getContainerSize(); i++) {
-            if (container.getItem(i).isEmpty()) {
-                int transfer = Math.min(toInsert.getMaxStackSize(), toInsert.getCount());
+            if (container.getItem(i).isEmpty() && container.canPlaceItem(i, toInsert)) {
+                int limit = Math.min(toInsert.getMaxStackSize(), container.getMaxStackSize(toInsert));
+                int transfer = Math.min(limit, toInsert.getCount());
+                if (transfer <= 0) {
+                    continue;
+                }
                 ItemStack placed = toInsert.copyWithCount(transfer);
                 container.setItem(i, placed);
                 toInsert.shrink(transfer);
