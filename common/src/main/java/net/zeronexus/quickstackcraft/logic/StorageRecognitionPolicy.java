@@ -38,6 +38,11 @@ public final class StorageRecognitionPolicy {
             "sophisticatedbackpacks",
             "sophisticatedstorage",
             "storagedrawers");
+    private static final Set<String> NETWORK_STORAGE_MODS = Set.of(
+            "ae2",
+            "appliedenergistics2",
+            "refinedstorage",
+            "refinedstorage2");
 
     private StorageRecognitionPolicy() {}
 
@@ -48,6 +53,9 @@ public final class StorageRecognitionPolicy {
             return true;
         }
         if (QuickStackSettings.configuredBlacklist.contains(blockId) || StorageBlockLists.isBlacklisted(blockId)) {
+            return false;
+        }
+        if (NETWORK_STORAGE_MODS.contains(blockId.getNamespace())) {
             return false;
         }
         if (QuickStackSettings.storageDetection == QuickStackSettings.StorageDetection.ANY_ITEM_INVENTORY) {

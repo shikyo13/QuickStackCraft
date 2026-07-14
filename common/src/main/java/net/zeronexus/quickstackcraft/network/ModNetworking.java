@@ -32,6 +32,7 @@ import net.zeronexus.quickstackcraft.config.QuickStackSettings;
 import net.zeronexus.quickstackcraft.logic.ContainerScanner;
 import net.zeronexus.quickstackcraft.logic.CraftFromNearbyLogic;
 import net.zeronexus.quickstackcraft.logic.InventoryTransferService;
+import net.zeronexus.quickstackcraft.logic.InventoryRestockService;
 import net.zeronexus.quickstackcraft.logic.FavoritesManager;
 import net.zeronexus.quickstackcraft.logic.OpenContainerSource;
 import net.zeronexus.quickstackcraft.logic.StorageListState;
@@ -208,28 +209,42 @@ public final class ModNetworking {
             ServerPlayer player = (ServerPlayer) context.getPlayer();
             List<ContainerAccess> containers = nearbyStorage(player);
 
+            boolean restocking = packet.action() == InventoryActionC2SPacket.Action.RESTOCK;
             boolean dumping = packet.action() == InventoryActionC2SPacket.Action.DUMP;
-            InventoryTransferService.DepositMode mode = dumping
-                    ? InventoryTransferService.DepositMode.ANY_STORAGE
-                    : InventoryTransferService.DepositMode.MATCHING_STORAGE;
-            TransferResult result = InventoryTransferService.movePlayerInventory(
-                    player, containers, DEFAULT_SKIP_HOTBAR,
-                    slot -> FavoritesManager.isFavorited(player, slot) || packet.protects(slot),
-                    mode);
+            TransferResult result;
+            if (restocking) {
+                result = InventoryRestockService.restockPlayerInventory(
+                        player, containers,
+                        slot -> FavoritesManager.isFavorited(player, slot) || packet.protects(slot));
+            } else {
+                InventoryTransferService.DepositMode mode = dumping
+                        ? InventoryTransferService.DepositMode.ANY_STORAGE
+                        : InventoryTransferService.DepositMode.MATCHING_STORAGE;
+                result = InventoryTransferService.movePlayerInventory(
+                        player, containers, DEFAULT_SKIP_HOTBAR,
+                        slot -> FavoritesManager.isFavorited(player, slot) || packet.protects(slot),
+                        mode);
+            }
 
             player.containerMenu.broadcastChanges();
 
             if (result.didSomething()) {
-                String messageKey = dumping
-                        ? "quickstackcraft.message.dump"
-                        : "quickstackcraft.message.quick_stack";
+                String messageKey = restocking
+                        ? "quickstackcraft.message.restock"
+                        : dumping
+                                ? "quickstackcraft.message.dump"
+                                : "quickstackcraft.message.quick_stack";
                 player.displayClientMessage(Component.translatable(
                         messageKey, result.itemsMoved(), result.containersUsed()), true);
-                sendHighlights(player, result);
+                sendHighlights(player, result, restocking
+                        ? ContainerHighlightS2CPacket.HighlightKind.SOURCE
+                        : ContainerHighlightS2CPacket.HighlightKind.DESTINATION);
             } else {
-                String messageKey = dumping
-                        ? "quickstackcraft.message.nothing_to_dump"
-                        : "quickstackcraft.message.nothing_to_stack";
+                String messageKey = restocking
+                        ? "quickstackcraft.message.nothing_to_restock"
+                        : dumping
+                                ? "quickstackcraft.message.nothing_to_dump"
+                                : "quickstackcraft.message.nothing_to_stack";
                 player.displayClientMessage(Component.translatable(messageKey), true);
             }
         });
@@ -272,29 +287,36 @@ public final class ModNetworking {
             OpenContainerTransferC2SPacket packet, NetworkManager.PacketContext context) {
         context.queue(() -> {
             ServerPlayer player = (ServerPlayer) context.getPlayer();
-            List<Slot> sourceSlots = OpenContainerSource.contentSlots(player.containerMenu);
-            if (sourceSlots.isEmpty()) {
+            net.minecraft.world.inventory.AbstractContainerMenu activeMenu = player.containerMenu;
+            if (player.isSpectator()
+                    || activeMenu.containerId != packet.containerId()
+                    || !activeMenu.stillValid(player)) {
+                return;
+            }
+
+            OpenContainerSource.Selection source = OpenContainerSource.select(activeMenu);
+            if (source.isEmpty()) {
                 player.displayClientMessage(Component.translatable("quickstackcraft.message.no_open_storage"), true);
                 return;
             }
 
-            List<ContainerAccess> containers = nearbyStorage(player);
+            List<ContainerAccess> containers = source.excludeOpenStorage(nearbyStorage(player));
 
             boolean allItems = packet.kind() == OpenContainerTransferC2SPacket.TransferKind.ALL_ITEMS;
             InventoryTransferService.DepositMode mode = allItems
                     ? InventoryTransferService.DepositMode.ANY_STORAGE
                     : InventoryTransferService.DepositMode.MATCHING_STORAGE;
             TransferResult result = InventoryTransferService.moveOpenContainer(
-                    player, sourceSlots, containers, mode);
+                    player, source.slots(), containers, mode);
 
-            player.containerMenu.broadcastChanges();
+            activeMenu.broadcastChanges();
 
             if (result.didSomething()) {
                 Component message = allItems
                         ? Component.translatable("quickstackcraft.message.dump", result.itemsMoved(), result.containersUsed())
                         : Component.translatable("quickstackcraft.message.quick_stack", result.itemsMoved(), result.containersUsed());
                 player.displayClientMessage(message, true);
-                sendHighlights(player, result);
+                sendHighlights(player, result, ContainerHighlightS2CPacket.HighlightKind.DESTINATION);
             } else {
                 player.displayClientMessage(
                         Component.translatable(allItems
@@ -325,6 +347,7 @@ public final class ModNetworking {
         }
 
         NetworkManager.sendToPlayer(player, new ContainerHighlightS2CPacket(
+                ContainerHighlightS2CPacket.HighlightKind.DESTINATION,
                 blockTargets(containers), entityTargets(containers)));
         player.displayClientMessage(
                 Component.translatable("quickstackcraft.message.preview_storage_result", containers.size()), true);
@@ -501,14 +524,18 @@ public final class ModNetworking {
 
     private static void handleContainerHighlight(ContainerHighlightS2CPacket packet, NetworkManager.PacketContext context) {
         context.queue(() -> {
-            ContainerHighlightRenderer.onHighlightReceived(packet.blockPositions(), packet.entityIds());
+            ContainerHighlightRenderer.onHighlightReceived(
+                    packet.kind(), packet.blockPositions(), packet.entityIds());
         });
     }
 
-    private static void sendHighlights(ServerPlayer player, TransferResult result) {
+    private static void sendHighlights(
+            ServerPlayer player,
+            TransferResult result,
+            ContainerHighlightS2CPacket.HighlightKind kind) {
         if (!result.blockPositions().isEmpty() || !result.entityIds().isEmpty()) {
             NetworkManager.sendToPlayer(player, new ContainerHighlightS2CPacket(
-                    result.blockPositions(), result.entityIds()));
+                    kind, result.blockPositions(), result.entityIds()));
             spawnHighlightParticles(player, result);
         }
     }

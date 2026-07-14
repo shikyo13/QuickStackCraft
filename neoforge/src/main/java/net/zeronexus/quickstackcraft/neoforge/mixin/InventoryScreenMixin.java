@@ -27,6 +27,7 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
     private InventoryScreenMixin() { super(null, null, Component.empty()); }
 
     @Unique private Button quickstackcraft$quickStackButton;
+    @Unique private Button quickstackcraft$restockButton;
     @Unique private Button quickstackcraft$dumpButton;
     @Unique private Button quickstackcraft$configButton;
 
@@ -45,22 +46,33 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
                 Component.translatable("quickstackcraft.button.quick_stack")));
         quickstackcraft$quickStackButton.setTooltipDelay(Duration.ofMillis(250));
 
+        quickstackcraft$restockButton = Button.builder(
+                        Component.literal(InventoryToolbarLayout.RESTOCK_LABEL),
+                        btn -> NetworkManager.sendToServer(new InventoryActionC2SPacket(
+                                InventoryActionC2SPacket.Action.RESTOCK, ExternalSlotLocks.snapshot())))
+                .bounds(InventoryToolbarLayout.buttonX(this.leftPos, 1), btnY, btnSize, btnSize)
+                .build();
+        quickstackcraft$restockButton.setTooltip(Tooltip.create(
+                Component.translatable("quickstackcraft.button.restock")));
+        quickstackcraft$restockButton.setTooltipDelay(Duration.ofMillis(250));
+
         quickstackcraft$dumpButton = Button.builder(
                         Component.literal(InventoryToolbarLayout.DUMP_LABEL),
                         btn -> NetworkManager.sendToServer(new InventoryActionC2SPacket(
                                 InventoryActionC2SPacket.Action.DUMP, ExternalSlotLocks.snapshot())))
-                .bounds(InventoryToolbarLayout.buttonX(this.leftPos, 1), btnY, btnSize, btnSize)
+                .bounds(InventoryToolbarLayout.buttonX(this.leftPos, 2), btnY, btnSize, btnSize)
                 .build();
         quickstackcraft$dumpButton.setTooltip(Tooltip.create(
                 Component.translatable("quickstackcraft.button.dump_all")));
         quickstackcraft$dumpButton.setTooltipDelay(Duration.ofMillis(250));
 
         quickstackcraft$configButton = new UiIconButton(
-                InventoryToolbarLayout.buttonX(this.leftPos, 2), btnY, btnSize, UiIcon.SETTINGS,
+                InventoryToolbarLayout.buttonX(this.leftPos, 3), btnY, btnSize, UiIcon.SETTINGS,
                 Component.translatable("quickstackcraft.button.config"),
                 btn -> QuickStackConfigScreen.open(this));
 
         this.addRenderableWidget(quickstackcraft$quickStackButton);
+        this.addRenderableWidget(quickstackcraft$restockButton);
         this.addRenderableWidget(quickstackcraft$dumpButton);
         this.addRenderableWidget(quickstackcraft$configButton);
     }

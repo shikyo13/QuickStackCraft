@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.0
+
+- Added Restock Partial Stacks, which fills existing unlocked inventory and hotbar stacks from nearby storage without occupying empty slots.
+- Added a compact R inventory control and an unbound Restock key under the QuickStack & Craft controls category.
+- Added cyan source-storage outlines and action-bar feedback for successful restocks.
+- Expanded direct open-storage Q/D transfers to vanilla chest-style menus, shulker boxes, Traveler's Backpack, and Inmis while retaining Sophisticated support.
+- Added active-menu validation and source exclusion so stale packets are ignored and an open storage block cannot transfer into itself.
+- Added a Restock segment to the animated tutorial using the same toolbar layout, lock marker, and highlight palette as the live interface.
+- Kept AE2 and Refined Storage network blocks outside automatic targeting so their native storage models remain authoritative.
+- Preserved feature parity across Fabric and NeoForge for Minecraft 1.21.1 and 1.21.4.
+
 ## 1.0.0
 
 - Rebuilt the in-game settings around General, Storage Whitelist / Blacklist, and Appearance tabs with responsive layouts, localized storage names, block icons, tooltips, color swatches, and save-on-close behavior.

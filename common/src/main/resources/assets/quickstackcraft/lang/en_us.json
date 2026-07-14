@@ -1,6 +1,8 @@
 {
     "quickstackcraft.message.quick_stack": "Stacked %d items across %d storage locations",
     "quickstackcraft.message.nothing_to_stack": "No nearby storage contains matching items",
+    "quickstackcraft.message.restock": "Restocked %d items from %d storage locations",
+    "quickstackcraft.message.nothing_to_restock": "No unlocked partial stacks have matching items in nearby storage",
     "quickstackcraft.message.dump": "Deposited %d items across %d storage locations",
     "quickstackcraft.message.nothing_to_dump": "No nearby storage has room for these items",
     "quickstackcraft.message.craft_ready": "Nearby ingredients placed (%d items)",
@@ -29,6 +31,7 @@
     "quickstackcraft.message.config_changed": "Settings changed on the server; review and save again",
 
     "quickstackcraft.button.quick_stack": "Quick Stack Nearby",
+    "quickstackcraft.button.restock": "Restock Partial Stacks",
     "quickstackcraft.button.dump_all": "Dump Unlocked Items",
     "quickstackcraft.button.config": "Open QuickStack & Craft Settings",
     "quickstackcraft.button.quick_stack_storage": "Quick Stack this storage into nearby storage",
@@ -36,6 +39,7 @@
     "quickstackcraft.tooltip.native_lock": "Locked by QuickStack & Craft",
 
     "key.quickstackcraft.quick_stack": "Quick Stack Nearby",
+    "key.quickstackcraft.restock": "Restock Partial Stacks",
     "key.quickstackcraft.dump_all": "Dump Unlocked Items",
     "key.quickstackcraft.preview_storage": "Preview Nearby Storage",
     "key.quickstackcraft.cycle_storage_list": "Cycle Storage Block Whitelist / Blacklist",
@@ -108,7 +112,7 @@
     "quickstackcraft.tutorial.replay": "Replay this chapter",
     "quickstackcraft.tutorial.first_run_note": "Shown automatically only once per save or server, when you first open your inventory. Replay anytime from Settings.",
 
-    "quickstackcraft.tutorial.inventory_management.title": "Quick Stack / Dump / Locks",
+    "quickstackcraft.tutorial.inventory_management.title": "Quick Stack / Restock / Dump / Locks",
     "quickstackcraft.tutorial.whitelist_blacklist_preview.title": "Whitelist / Blacklist / Preview",
 
     "quickstackcraft.tutorial.quick_stack.title": "Quick Stack",
@@ -116,6 +120,12 @@
     "quickstackcraft.tutorial.quick_stack.caption.2": "Open your inventory and select Quick Stack Nearby.",
     "quickstackcraft.tutorial.quick_stack.caption.3": "Matching items move while unrelated and locked items stay put.",
     "quickstackcraft.tutorial.quick_stack.caption.4": "Gold outlines show which storage received items.",
+
+    "quickstackcraft.tutorial.restock.title": "Restock Nearby",
+    "quickstackcraft.tutorial.restock.caption.1": "Nearby storage holds more of the partial stacks in your inventory.",
+    "quickstackcraft.tutorial.restock.caption.2": "Select R in your inventory or bind Restock Partial Stacks in Controls.",
+    "quickstackcraft.tutorial.restock.caption.3": "Existing unlocked stacks fill up; empty and locked slots remain unchanged.",
+    "quickstackcraft.tutorial.restock.caption.4": "Cyan outlines show which storage supplied the items.",
 
     "quickstackcraft.tutorial.craft_nearby.title": "Craft Nearby",
     "quickstackcraft.tutorial.craft_nearby.caption.1": "The nearby chest contains three iron ingots and two sticks.",

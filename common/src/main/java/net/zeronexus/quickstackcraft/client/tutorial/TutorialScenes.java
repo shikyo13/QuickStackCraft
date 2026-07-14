@@ -15,11 +15,12 @@ import java.util.List;
 public final class TutorialScenes {
 
     private static final TutorialScene QUICK_STACK = new QuickStackScene();
+    private static final TutorialScene RESTOCK = new RestockScene();
     private static final TutorialScene DUMP_AND_LOCKS = new DumpAndLocksScene();
     private static final TutorialScene WHITELIST_BLACKLIST = new WhitelistBlacklistScene();
     private static final TutorialScene STORAGE_PREVIEW = new StoragePreviewScene();
     private static final List<TutorialScene> SCENES = List.of(
-            new CombinedScene("inventory_management", QUICK_STACK, DUMP_AND_LOCKS),
+            new CombinedScene("inventory_management", QUICK_STACK, RESTOCK, DUMP_AND_LOCKS),
             new CraftNearbyScene(),
             new CombinedScene(
                     "whitelist_blacklist_preview", WHITELIST_BLACKLIST, STORAGE_PREVIEW));
@@ -191,6 +192,72 @@ public final class TutorialScenes {
         }
     }
 
+    private static final class RestockScene extends BaseScene {
+        private RestockScene() {
+            super("restock", 18.0D);
+        }
+
+        @Override
+        public Component caption(double time) {
+            if (time < 4.5D) return caption(1);
+            if (time < 9.0D) return caption(2);
+            if (time < 13.5D) return caption(3);
+            return caption(4);
+        }
+
+        @Override
+        public void render(TutorialRenderContext context, double time) {
+            double focus = context.transition(time, 5.5D, 7.5D);
+            context.beginScene(lerp(0.0D, -8.0D, focus), 0.0D, lerp(1.0D, 1.07D, focus));
+            context.renderWorldBackdrop();
+
+            int sourceOutline = time >= 8.5D && time < 16.0D
+                    ? StorageHighlightPalette.sourceArgb() : 0;
+            float chestOpen = (float) (time < 15.5D
+                    ? context.transition(time, 0.8D, 2.0D)
+                    : 1.0D - context.transition(time, 15.5D, 17.0D));
+            context.renderChest(392, 144, 44.0F, chestOpen, sourceOutline);
+
+            if (time < 4.5D) {
+                context.renderChestGui(277, 4, 0.52F, List.of(
+                        slot(0, new ItemStack(Items.COBBLESTONE, 44)),
+                        slot(1, new ItemStack(Items.OAK_PLANKS, 56)),
+                        slot(2, new ItemStack(Items.COOKED_BEEF, 60))));
+            } else {
+                boolean restored = time >= 9.0D;
+                List<TutorialRenderContext.SlotItem> inventory = List.of(
+                        slot(9, new ItemStack(Items.COBBLESTONE, restored ? 64 : 20)),
+                        slot(10, new ItemStack(Items.OAK_PLANKS, restored ? 64 : 8)),
+                        locked(11, new ItemStack(Items.COOKED_BEEF, 4)));
+                int inventoryX = 142;
+                int inventoryY = 8;
+                float inventoryScale = 0.72F;
+                context.renderInventoryGui(inventoryX, inventoryY, inventoryScale, inventory);
+                boolean pressed = time >= 7.5D && time < 8.2D;
+                context.renderInventoryToolbar(inventoryX, inventoryY, inventoryScale,
+                        TutorialRenderContext.InventoryAction.RESTOCK, pressed);
+                double cursorMove = context.transition(time, 6.0D, 7.5D);
+                context.renderCursor(
+                        lerp(224, InventoryToolbarLayout.scaledButtonCenterX(
+                                inventoryX, inventoryScale, 1), cursorMove),
+                        lerp(31, InventoryToolbarLayout.scaledButtonCenterY(
+                                inventoryY, inventoryScale), cursorMove),
+                        pressed);
+
+                double travel = context.transition(time, 9.0D, 12.0D);
+                if (travel > 0.0D && travel < 1.0D) {
+                    context.renderItem(new ItemStack(Items.COBBLESTONE, 44),
+                            curve(382, 320, 210, 154, travel),
+                            curve(116, 142, 140, 74, travel), 1.0F);
+                    context.renderItem(new ItemStack(Items.OAK_PLANKS, 56),
+                            curve(390, 328, 220, 167, travel),
+                            curve(124, 146, 144, 74, travel), 1.0F);
+                }
+            }
+            context.endScene();
+        }
+    }
+
     private static final class CraftNearbyScene extends BaseScene {
         private CraftNearbyScene() {
             super("craft_nearby", 25.0D);
@@ -330,7 +397,7 @@ public final class TutorialScenes {
                 double dumpMove = context.transition(time, 6.8D, 9.0D);
                 context.renderCursor(
                         lerp(211, InventoryToolbarLayout.scaledButtonCenterX(
-                                inventoryX, inventoryScale, 1), dumpMove),
+                                inventoryX, inventoryScale, 2), dumpMove),
                         lerp(30, InventoryToolbarLayout.scaledButtonCenterY(
                                 inventoryY, inventoryScale), dumpMove),
                         pressed);

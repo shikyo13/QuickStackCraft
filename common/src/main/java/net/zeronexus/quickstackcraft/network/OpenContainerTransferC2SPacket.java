@@ -4,7 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public record OpenContainerTransferC2SPacket(TransferKind kind) implements CustomPacketPayload {
+public record OpenContainerTransferC2SPacket(TransferKind kind, int containerId) implements CustomPacketPayload {
 
     public enum TransferKind {
         MATCHING_ITEMS,
@@ -16,8 +16,12 @@ public record OpenContainerTransferC2SPacket(TransferKind kind) implements Custo
 
     public static final StreamCodec<FriendlyByteBuf, OpenContainerTransferC2SPacket> CODEC =
             StreamCodec.of(
-                    (buffer, value) -> buffer.writeEnum(value.kind()),
-                    buffer -> new OpenContainerTransferC2SPacket(buffer.readEnum(TransferKind.class)));
+                    (buffer, value) -> {
+                        buffer.writeEnum(value.kind());
+                        buffer.writeVarInt(value.containerId());
+                    },
+                    buffer -> new OpenContainerTransferC2SPacket(
+                            buffer.readEnum(TransferKind.class), buffer.readVarInt()));
 
     @Override
     public Type<OpenContainerTransferC2SPacket> type() {

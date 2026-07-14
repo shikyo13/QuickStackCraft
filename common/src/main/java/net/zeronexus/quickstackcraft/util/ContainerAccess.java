@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
  * Unified wrapper around block entity containers and entity containers.
@@ -90,6 +89,46 @@ public class ContainerAccess {
         }
 
         return insertThroughSlots(stack);
+    }
+
+    /**
+     * Extract up to {@code requested} matching items through the container's real storage path.
+     */
+    public ItemStack extractItem(ItemStack template, int requested) {
+        if (template.isEmpty() || requested <= 0) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack extracted = ItemStack.EMPTY;
+        int remaining = requested;
+        for (int index = 0; index < container.getContainerSize() && remaining > 0; index++) {
+            ItemStack available = container.getItem(index);
+            if (available.isEmpty()
+                    || !ItemStack.isSameItemSameComponents(available, template)) {
+                continue;
+            }
+
+            ItemStack removed = container.removeItem(index, Math.min(remaining, available.getCount()));
+            if (removed.isEmpty()) {
+                continue;
+            }
+            if (!ItemStack.isSameItemSameComponents(removed, template)) {
+                insertItem(removed);
+                continue;
+            }
+
+            if (extracted.isEmpty()) {
+                extracted = removed.copy();
+            } else {
+                extracted.grow(removed.getCount());
+            }
+            remaining -= removed.getCount();
+        }
+
+        if (!extracted.isEmpty()) {
+            container.setChanged();
+        }
+        return extracted;
     }
 
     private ItemStack insertThroughSlots(ItemStack stack) {

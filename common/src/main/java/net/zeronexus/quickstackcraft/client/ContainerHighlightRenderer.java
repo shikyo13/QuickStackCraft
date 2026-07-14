@@ -11,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.zeronexus.quickstackcraft.logic.StorageListState;
+import net.zeronexus.quickstackcraft.network.ContainerHighlightS2CPacket;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -21,13 +22,19 @@ public final class ContainerHighlightRenderer {
     private static final Collection<BlockHighlight> blockHighlights = new ArrayDeque<>();
     private static final Collection<EntityHighlight> entityHighlights = new ArrayDeque<>();
     private static ListStateHighlight listStateHighlight;
+    private static ContainerHighlightS2CPacket.HighlightKind highlightKind =
+            ContainerHighlightS2CPacket.HighlightKind.DESTINATION;
 
     private ContainerHighlightRenderer() {}
 
-    public static void onHighlightReceived(List<BlockPos> positions, List<Integer> entityIds) {
+    public static void onHighlightReceived(
+            ContainerHighlightS2CPacket.HighlightKind kind,
+            List<BlockPos> positions,
+            List<Integer> entityIds) {
         long expiry = System.currentTimeMillis() + ClientPreferences.outlineLifetimeMs();
         blockHighlights.clear();
         entityHighlights.clear();
+        highlightKind = kind;
         positions.forEach(position -> blockHighlights.add(new BlockHighlight(position, expiry)));
         entityIds.forEach(entityId -> entityHighlights.add(new EntityHighlight(entityId, expiry)));
     }
@@ -56,7 +63,9 @@ public final class ContainerHighlightRenderer {
         }
 
         VertexConsumer lines = bufferSource.getBuffer(RenderType.lines());
-        float[] color = StorageHighlightPalette.destinationRgb();
+        float[] color = highlightKind == ContainerHighlightS2CPacket.HighlightKind.SOURCE
+                ? StorageHighlightPalette.sourceRgb()
+                : StorageHighlightPalette.destinationRgb();
         float alpha = (float) Math.max(0.0D, Math.min(1.0D, ClientPreferences.outlineOpacity()));
 
         for (BlockHighlight highlight : blockHighlights) {

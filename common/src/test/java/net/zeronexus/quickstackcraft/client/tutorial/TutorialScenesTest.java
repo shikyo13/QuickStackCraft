@@ -11,7 +11,7 @@ class TutorialScenesTest {
         var chapters = TutorialScenes.all();
 
         assertEquals(3, chapters.size());
-        assertEquals(36.0D, chapters.get(0).durationSeconds());
+        assertEquals(54.0D, chapters.get(0).durationSeconds());
         assertEquals(25.0D, chapters.get(1).durationSeconds());
         assertEquals(35.0D, chapters.get(2).durationSeconds());
     }

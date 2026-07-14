@@ -13,7 +13,7 @@ public interface TutorialRenderContext {
 
     record Bounds(int x, int y, int width, int height) {}
     record SlotItem(int slot, ItemStack stack, boolean locked) {}
-    enum InventoryAction { QUICK_STACK, DUMP }
+    enum InventoryAction { QUICK_STACK, RESTOCK, DUMP }
 
     Bounds viewport();
 

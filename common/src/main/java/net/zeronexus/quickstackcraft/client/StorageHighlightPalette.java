@@ -7,6 +7,7 @@ public final class StorageHighlightPalette {
     private static final int WHITELISTED = 0xFF4FDB6B;
     private static final int BLACKLISTED = 0xFFF0454D;
     private static final int DEFAULT = 0xFF40C7EB;
+    private static final int SOURCE = 0xFF45D4E8;
 
     private StorageHighlightPalette() {}
 
@@ -38,6 +39,14 @@ public final class StorageHighlightPalette {
 
     public static float[] destinationRgb() {
         return rgb(destinationArgb());
+    }
+
+    public static int sourceArgb() {
+        return SOURCE;
+    }
+
+    public static float[] sourceRgb() {
+        return rgb(SOURCE);
     }
 
     public static float[] listStateRgb(StorageListState state) {

@@ -2,11 +2,12 @@ package net.zeronexus.quickstackcraft.client;
 
 public final class InventoryToolbarLayout {
 
-    public static final int OFFSET_X = 126;
+    public static final int OFFSET_X = 124;
     public static final int OFFSET_Y = 62;
-    public static final int BUTTON_SIZE = 14;
+    public static final int BUTTON_SIZE = 12;
     public static final int BUTTON_GAP = 1;
     public static final String QUICK_STACK_LABEL = "Q";
+    public static final String RESTOCK_LABEL = "R";
     public static final String DUMP_LABEL = "D";
 
     private InventoryToolbarLayout() {}
