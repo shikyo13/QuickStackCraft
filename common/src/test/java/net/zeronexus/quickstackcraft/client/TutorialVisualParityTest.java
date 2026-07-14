@@ -13,11 +13,12 @@ class TutorialVisualParityTest {
         int recipeBookRight = 124;
         int inventoryWidth = 176;
 
-        assertEquals(126, InventoryToolbarLayout.buttonX(0, 0));
-        assertEquals(141, InventoryToolbarLayout.buttonX(0, 1));
-        assertEquals(156, InventoryToolbarLayout.buttonX(0, 2));
-        assertTrue(InventoryToolbarLayout.buttonX(0, 0) >= recipeBookRight + 2);
-        assertTrue(InventoryToolbarLayout.buttonX(0, 2) + InventoryToolbarLayout.BUTTON_SIZE
+        assertEquals(124, InventoryToolbarLayout.buttonX(0, 0));
+        assertEquals(137, InventoryToolbarLayout.buttonX(0, 1));
+        assertEquals(150, InventoryToolbarLayout.buttonX(0, 2));
+        assertEquals(163, InventoryToolbarLayout.buttonX(0, 3));
+        assertTrue(InventoryToolbarLayout.buttonX(0, 0) >= recipeBookRight);
+        assertTrue(InventoryToolbarLayout.buttonX(0, 3) + InventoryToolbarLayout.BUTTON_SIZE
                 <= inventoryWidth);
     }
 
@@ -29,6 +30,7 @@ class TutorialVisualParityTest {
                 StorageHighlightPalette.listStateArgb(StorageListState.BLACKLISTED));
         assertEquals(0xFF40C7EB,
                 StorageHighlightPalette.listStateArgb(StorageListState.DEFAULT));
+        assertEquals(0xFF45D4E8, StorageHighlightPalette.sourceArgb());
     }
 
     @Test

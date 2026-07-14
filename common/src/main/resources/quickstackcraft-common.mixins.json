@@ -3,7 +3,9 @@
     "package": "net.zeronexus.quickstackcraft.mixin",
     "compatibilityLevel": "JAVA_21",
     "minVersion": "0.8",
-    "mixins": [],
+    "mixins": [
+        "CompoundContainerAccessor"
+    ],
     "client": [
         "AbstractContainerScreenMixin",
         "LevelRendererMixin",

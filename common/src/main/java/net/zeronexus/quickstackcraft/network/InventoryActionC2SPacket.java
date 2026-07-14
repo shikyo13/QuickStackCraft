@@ -9,6 +9,7 @@ public record InventoryActionC2SPacket(Action action, long externalProtection) i
 
     public enum Action {
         QUICK_STACK,
+        RESTOCK,
         DUMP
     }
 

@@ -44,10 +44,12 @@ final class MinecraftTutorialRenderContext implements TutorialRenderContext {
             ResourceLocation.withDefaultNamespace("recipe_book/filter_disabled");
     private static final Button QUICK_STACK_BUTTON =
             textToolbarButton(InventoryToolbarLayout.QUICK_STACK_LABEL, 0);
+    private static final Button RESTOCK_BUTTON =
+            textToolbarButton(InventoryToolbarLayout.RESTOCK_LABEL, 1);
     private static final Button DUMP_BUTTON =
-            textToolbarButton(InventoryToolbarLayout.DUMP_LABEL, 1);
+            textToolbarButton(InventoryToolbarLayout.DUMP_LABEL, 2);
     private static final UiIconButton SETTINGS_BUTTON = new UiIconButton(
-            InventoryToolbarLayout.buttonX(0, 2), InventoryToolbarLayout.OFFSET_Y,
+            InventoryToolbarLayout.buttonX(0, 3), InventoryToolbarLayout.OFFSET_Y,
             InventoryToolbarLayout.BUTTON_SIZE, UiIcon.SETTINGS, Component.empty(), button -> {});
     private static EditBox recipeSearch;
 
@@ -340,6 +342,7 @@ final class MinecraftTutorialRenderContext implements TutorialRenderContext {
 
     private void renderInventoryToolbarLocal(InventoryAction action, boolean pressed) {
         renderToolbarWidget(QUICK_STACK_BUTTON, pressed && action == InventoryAction.QUICK_STACK);
+        renderToolbarWidget(RESTOCK_BUTTON, pressed && action == InventoryAction.RESTOCK);
         renderToolbarWidget(DUMP_BUTTON, pressed && action == InventoryAction.DUMP);
         renderToolbarWidget(SETTINGS_BUTTON, false);
     }

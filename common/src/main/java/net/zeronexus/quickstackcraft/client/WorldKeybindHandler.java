@@ -21,6 +21,9 @@ public final class WorldKeybindHandler {
         while (ModKeybinds.QUICK_STACK.consumeClick()) {
             sendInventoryAction(InventoryActionC2SPacket.Action.QUICK_STACK);
         }
+        while (ModKeybinds.RESTOCK.consumeClick()) {
+            sendInventoryAction(InventoryActionC2SPacket.Action.RESTOCK);
+        }
         while (ModKeybinds.DUMP_ALL.consumeClick()) {
             sendInventoryAction(InventoryActionC2SPacket.Action.DUMP);
         }

@@ -127,6 +127,9 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
                 quickstackcraft$sendInventoryAction(InventoryActionC2SPacket.Action.QUICK_STACK);
             }
             cir.setReturnValue(true);
+        } else if (ModKeybinds.RESTOCK.matches(keyCode, scanCode)) {
+            quickstackcraft$sendInventoryAction(InventoryActionC2SPacket.Action.RESTOCK);
+            cir.setReturnValue(true);
         } else if (ModKeybinds.DUMP_ALL.matches(keyCode, scanCode)) {
             if (quickstackcraft$isOpenStorageScreen()) {
                 quickstackcraft$sendStorageTransfer(true);
@@ -150,7 +153,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         OpenContainerTransferC2SPacket.TransferKind kind = dumpAll
                 ? OpenContainerTransferC2SPacket.TransferKind.ALL_ITEMS
                 : OpenContainerTransferC2SPacket.TransferKind.MATCHING_ITEMS;
-        NetworkManager.sendToServer(new OpenContainerTransferC2SPacket(kind));
+        NetworkManager.sendToServer(new OpenContainerTransferC2SPacket(kind, this.menu.containerId));
     }
 
     @Unique

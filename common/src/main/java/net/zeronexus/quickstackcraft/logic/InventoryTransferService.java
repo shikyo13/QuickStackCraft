@@ -1,6 +1,5 @@
 package net.zeronexus.quickstackcraft.logic;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -111,7 +110,7 @@ public final class InventoryTransferService {
             }
         }
 
-        return summarize(movedItems, changedDestinations);
+        return TransferResult.fromChangedContainers(movedItems, changedDestinations);
     }
 
     private static List<ContainerAccess> orderedDestinations(
@@ -142,19 +141,4 @@ public final class InventoryTransferService {
         }
     }
 
-    private static TransferResult summarize(int movedItems, Set<ContainerAccess> destinations) {
-        List<BlockPos> blocks = new ArrayList<>();
-        List<Integer> entities = new ArrayList<>();
-
-        for (ContainerAccess destination : destinations) {
-            destination.container().setChanged();
-            if (destination.isBlockContainer()) {
-                blocks.add(destination.blockPos());
-            } else if (destination.entity() != null) {
-                entities.add(destination.entity().getId());
-            }
-        }
-
-        return new TransferResult(movedItems, destinations.size(), List.copyOf(blocks), List.copyOf(entities));
-    }
 }

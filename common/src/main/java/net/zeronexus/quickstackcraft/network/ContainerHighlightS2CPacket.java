@@ -9,7 +9,15 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import java.util.ArrayList;
 import java.util.List;
 
-public record ContainerHighlightS2CPacket(List<BlockPos> blockPositions, List<Integer> entityIds) implements CustomPacketPayload {
+public record ContainerHighlightS2CPacket(
+        HighlightKind kind,
+        List<BlockPos> blockPositions,
+        List<Integer> entityIds) implements CustomPacketPayload {
+
+    public enum HighlightKind {
+        DESTINATION,
+        SOURCE
+    }
 
     public static final CustomPacketPayload.Type<ContainerHighlightS2CPacket> TYPE =
             new CustomPacketPayload.Type<>(ModNetworking.id("highlight"));
@@ -18,6 +26,7 @@ public record ContainerHighlightS2CPacket(List<BlockPos> blockPositions, List<In
             StreamCodec.of(ContainerHighlightS2CPacket::encode, ContainerHighlightS2CPacket::decode);
 
     private static void encode(FriendlyByteBuf buf, ContainerHighlightS2CPacket pkt) {
+        buf.writeEnum(pkt.kind);
         buf.writeVarInt(pkt.blockPositions.size());
         for (BlockPos pos : pkt.blockPositions) {
             buf.writeVarInt(pos.getX());
@@ -31,6 +40,7 @@ public record ContainerHighlightS2CPacket(List<BlockPos> blockPositions, List<In
     }
 
     private static ContainerHighlightS2CPacket decode(FriendlyByteBuf buf) {
+        HighlightKind kind = buf.readEnum(HighlightKind.class);
         int blockCount = buf.readVarInt();
         List<BlockPos> positions = new ArrayList<>(blockCount);
         for (int i = 0; i < blockCount; i++) {
@@ -41,7 +51,7 @@ public record ContainerHighlightS2CPacket(List<BlockPos> blockPositions, List<In
         for (int i = 0; i < entityCount; i++) {
             entityIds.add(buf.readVarInt());
         }
-        return new ContainerHighlightS2CPacket(positions, entityIds);
+        return new ContainerHighlightS2CPacket(kind, positions, entityIds);
     }
 
     @Override

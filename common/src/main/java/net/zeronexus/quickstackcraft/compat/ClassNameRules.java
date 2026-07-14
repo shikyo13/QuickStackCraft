@@ -10,6 +10,10 @@ public final class ClassNameRules {
 
     private static final String SOPHISTICATED_CORE_STORAGE_SLOT =
             "net.p3pp3rf1y.sophisticatedcore.common.gui.StorageInventorySlot";
+    private static final String TRAVELERS_BACKPACK_STORAGE_SLOT =
+            "com.tiviacz.travelersbackpack.inventory.menu.slot.BackpackSlotItemHandler";
+    private static final String INMIS_BACKPACK_MENU =
+            "draylar.inmis.ui.BackpackScreenHandler";
 
     private ClassNameRules() {}
 
@@ -18,8 +22,20 @@ public final class ClassNameRules {
     }
 
     public static boolean isSophisticatedStorageSlot(Class<?> slotClass) {
-        for (Class<?> current = slotClass; current != null; current = current.getSuperclass()) {
-            if (isSophisticatedStorageSlot(current.getName())) {
+        return hasTypeInHierarchy(slotClass, SOPHISTICATED_CORE_STORAGE_SLOT);
+    }
+
+    public static boolean isTravelersBackpackStorageSlot(Class<?> slotClass) {
+        return hasTypeInHierarchy(slotClass, TRAVELERS_BACKPACK_STORAGE_SLOT);
+    }
+
+    public static boolean isInmisBackpackMenu(Class<?> menuClass) {
+        return hasTypeInHierarchy(menuClass, INMIS_BACKPACK_MENU);
+    }
+
+    private static boolean hasTypeInHierarchy(Class<?> type, String expectedName) {
+        for (Class<?> current = type; current != null; current = current.getSuperclass()) {
+            if (expectedName.equals(current.getName())) {
                 return true;
             }
         }
