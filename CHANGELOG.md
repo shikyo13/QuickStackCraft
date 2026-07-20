@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1
+
+- Fixed Fabric dedicated servers crashing during startup while registering clientbound packets.
+- Added safe automatic recognition for direct Ars Nouveau Repository blocks without targeting aggregate storage networks.
+
 ## 1.0.0
 
 - Rebuilt the in-game settings around General, Storage Whitelist / Blacklist, and Appearance tabs with responsive layouts, localized storage names, block icons, tooltips, color swatches, and save-on-close behavior.
