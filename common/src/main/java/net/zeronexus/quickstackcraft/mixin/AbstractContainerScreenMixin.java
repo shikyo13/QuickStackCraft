@@ -101,7 +101,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         if (button != 0 || !Screen.hasAltDown()) {
             return;
         }
-        if (ExternalSlotLocks.detected()) {
+        if (ExternalSlotLocks.isToggleGestureActive()) {
             return;
         }
 

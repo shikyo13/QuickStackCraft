@@ -9,6 +9,7 @@ public final class ExternalSlotLocks {
 
     private static final String COMPONENT_REGISTRY = "com.kirdow.itemlocks.proxy.Components";
     private static final String LOCK_SERVICE = "com.kirdow.itemlocks.client.LockManager";
+    private static final String KEY_BINDINGS = "com.kirdow.itemlocks.client.input.KeyBindings";
     private static final long RENDER_CACHE_NANOS = 50_000_000L;
 
     private record ReflectionApi(Object service, Method rawSlotQuery) {
@@ -18,7 +19,9 @@ public final class ExternalSlotLocks {
     }
 
     private static ReflectionApi api;
+    private static Method toggleGestureQuery;
     private static boolean permanentlyUnavailable;
+    private static boolean toggleGestureUnavailable;
     private static Boolean detected;
     private static long cachedMask;
     private static long cacheDeadline;
@@ -63,6 +66,31 @@ public final class ExternalSlotLocks {
             api = null;
         }
         return 0L;
+    }
+
+    /**
+     * Returns true only while ItemLocks is actively handling its configured lock gesture.
+     * Presence alone is not enough because its lock key is configurable and is not Alt by default.
+     */
+    public static boolean isToggleGestureActive() {
+        if (!detected() || toggleGestureUnavailable) {
+            return false;
+        }
+
+        try {
+            if (toggleGestureQuery == null) {
+                Class<?> keyBindingsType = Class.forName(
+                        KEY_BINDINGS, false, ExternalSlotLocks.class.getClassLoader());
+                toggleGestureQuery = keyBindingsType.getMethod("isToggle");
+            }
+            return Boolean.TRUE.equals(toggleGestureQuery.invoke(null));
+        } catch (ClassNotFoundException | NoSuchMethodException | LinkageError incompatibleApi) {
+            toggleGestureUnavailable = true;
+            toggleGestureQuery = null;
+        } catch (ReflectiveOperationException | RuntimeException notReady) {
+            toggleGestureQuery = null;
+        }
+        return false;
     }
 
     public static long renderSnapshot() {
