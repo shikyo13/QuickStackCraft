@@ -1,6 +1,8 @@
 package net.zeronexus.quickstackcraft.network;
 
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.platform.Platform;
+import dev.architectury.utils.Env;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -41,6 +43,8 @@ import net.zeronexus.quickstackcraft.logic.TransferResult;
 import net.zeronexus.quickstackcraft.logic.TutorialProgressManager;
 import net.zeronexus.quickstackcraft.util.ContainerAccess;
 import net.zeronexus.quickstackcraft.util.BlockSelection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +54,8 @@ import java.util.Set;
 
 public final class ModNetworking {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuickStackCraft.MOD_ID);
+    private static final int CLIENTBOUND_PACKET_COUNT = 6;
     private static final boolean DEFAULT_SKIP_HOTBAR = true;
     private static final boolean DEFAULT_INCLUDE_ENTITIES = true;
     private static long configRevision;
@@ -78,13 +84,6 @@ public final class ModNetworking {
                 ConfigSaveC2SPacket.CODEC,
                 ModNetworking::handleConfigSave
         );
-        NetworkManager.registerReceiver(
-                NetworkManager.Side.S2C,
-                ConfigSyncS2CPacket.TYPE,
-                ConfigSyncS2CPacket.CODEC,
-                ModNetworking::handleConfigSync
-        );
-
         // C2S: transfer from an open supported storage screen
         NetworkManager.registerReceiver(
                 NetworkManager.Side.C2S,
@@ -100,13 +99,6 @@ public final class ModNetworking {
                 StorageListActionC2SPacket.CODEC,
                 ModNetworking::handleStorageListAction
         );
-        NetworkManager.registerReceiver(
-                NetworkManager.Side.S2C,
-                StorageListFeedbackS2CPacket.TYPE,
-                StorageListFeedbackS2CPacket.CODEC,
-                ModNetworking::handleStorageListFeedback
-        );
-
         // C2S: server-validated recipe transfer from recipe viewers and the vanilla book
         NetworkManager.registerReceiver(
                 NetworkManager.Side.C2S,
@@ -123,20 +115,6 @@ public final class ModNetworking {
                 ModNetworking::handleFavoriteToggle
         );
 
-        // S2C: Sync Favorites
-        NetworkManager.registerReceiver(
-                NetworkManager.Side.S2C,
-                FavoriteSyncS2CPacket.TYPE,
-                FavoriteSyncS2CPacket.CODEC,
-                ModNetworking::handleFavoriteSync
-        );
-
-        NetworkManager.registerReceiver(
-                NetworkManager.Side.S2C,
-                TutorialStatusS2CPacket.TYPE,
-                TutorialStatusS2CPacket.CODEC,
-                ModNetworking::handleTutorialStatus
-        );
         NetworkManager.registerReceiver(
                 NetworkManager.Side.C2S,
                 TutorialSeenC2SPacket.TYPE,
@@ -152,15 +130,58 @@ public final class ModNetworking {
                 ModNetworking::handleNearbyItemsScan
         );
 
-        // S2C: Nearby Items Sync (response to scan)
+        registerClientboundPackets();
+    }
+
+    private static void registerClientboundPackets() {
+        if (Platform.getEnvironment() == Env.CLIENT) {
+            registerClientboundReceivers();
+            LOGGER.info("Registered {} clientbound packet receivers", CLIENTBOUND_PACKET_COUNT);
+            return;
+        }
+
+        NetworkManager.registerS2CPayloadType(ConfigSyncS2CPacket.TYPE, ConfigSyncS2CPacket.CODEC);
+        NetworkManager.registerS2CPayloadType(
+                StorageListFeedbackS2CPacket.TYPE, StorageListFeedbackS2CPacket.CODEC);
+        NetworkManager.registerS2CPayloadType(FavoriteSyncS2CPacket.TYPE, FavoriteSyncS2CPacket.CODEC);
+        NetworkManager.registerS2CPayloadType(TutorialStatusS2CPacket.TYPE, TutorialStatusS2CPacket.CODEC);
+        NetworkManager.registerS2CPayloadType(NearbyItemsSyncS2CPacket.TYPE, NearbyItemsSyncS2CPacket.CODEC);
+        NetworkManager.registerS2CPayloadType(
+                ContainerHighlightS2CPacket.TYPE, ContainerHighlightS2CPacket.CODEC);
+        LOGGER.info("Registered {} clientbound payload types for the dedicated server", CLIENTBOUND_PACKET_COUNT);
+    }
+
+    private static void registerClientboundReceivers() {
+        NetworkManager.registerReceiver(
+                NetworkManager.Side.S2C,
+                ConfigSyncS2CPacket.TYPE,
+                ConfigSyncS2CPacket.CODEC,
+                ModNetworking::handleConfigSync
+        );
+        NetworkManager.registerReceiver(
+                NetworkManager.Side.S2C,
+                StorageListFeedbackS2CPacket.TYPE,
+                StorageListFeedbackS2CPacket.CODEC,
+                ModNetworking::handleStorageListFeedback
+        );
+        NetworkManager.registerReceiver(
+                NetworkManager.Side.S2C,
+                FavoriteSyncS2CPacket.TYPE,
+                FavoriteSyncS2CPacket.CODEC,
+                ModNetworking::handleFavoriteSync
+        );
+        NetworkManager.registerReceiver(
+                NetworkManager.Side.S2C,
+                TutorialStatusS2CPacket.TYPE,
+                TutorialStatusS2CPacket.CODEC,
+                ModNetworking::handleTutorialStatus
+        );
         NetworkManager.registerReceiver(
                 NetworkManager.Side.S2C,
                 NearbyItemsSyncS2CPacket.TYPE,
                 NearbyItemsSyncS2CPacket.CODEC,
                 ModNetworking::handleNearbyItemsSync
         );
-
-        // S2C: destination outline feedback
         NetworkManager.registerReceiver(
                 NetworkManager.Side.S2C,
                 ContainerHighlightS2CPacket.TYPE,
