@@ -426,7 +426,8 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
                 Component.translatable(toolbar.visible()
                         ? "quickstackcraft.config.buttons_shown" : "quickstackcraft.config.buttons_hidden"),
                 Component.translatable("quickstackcraft.config.buttons_visibility.tooltip"), pressed -> {
-                    setSelectedToolbar(new ToolbarPreferences(!toolbar.visible(), toolbar.offsetX(), toolbar.offsetY()));
+                    ToolbarPreferences current = selectedToolbar();
+                    setSelectedToolbar(new ToolbarPreferences(!current.visible(), current.offsetX(), current.offsetY()));
                     rebuildSettingsWidgets();
                 });
         addToolbarOffset(x, y + 44, width, true, toolbar.offsetX());
