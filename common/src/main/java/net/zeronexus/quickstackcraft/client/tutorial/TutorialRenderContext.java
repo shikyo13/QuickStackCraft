@@ -40,6 +40,8 @@ public interface TutorialRenderContext {
 
     default void renderButtonSettings(int x, int y, boolean visible, int offsetX, int offsetY) {}
 
+    default void renderInventorySlotHighlight(int x, int y, float scale, int slot, int color) {}
+
     void renderCraftingGui(int x, int y, float scale, List<SlotItem> gridItems, ItemStack result);
 
     void renderRecipeBook(int x, int y, float scale, ItemStack recipe, boolean highlighted);
