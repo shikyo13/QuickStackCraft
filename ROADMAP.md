@@ -4,6 +4,8 @@
 
 Target: Minecraft 1.21.1 and 1.21.4, on Fabric and NeoForge.
 
+The features below are implemented in the 1.1 development branches. Both versions build and pass automated tests for both loaders. In-game verification remains before release.
+
 - **Restock partial stacks.** Fill existing unlocked stacks from nearby storage without occupying empty slots. Show which containers supplied the items.
 - **Safer transfers from open storage.** Keep the open container out of the destination list and ignore requests for a screen that has already closed.
 - **Choose where buttons appear.** Hide inventory and storage buttons independently, or move either toolbar by an exact horizontal and vertical pixel offset. Keep keybinds available when buttons are hidden. Requested in [#6: QOL improvements](https://github.com/shikyo13/QuickStackCraft/issues/6).
