@@ -41,7 +41,11 @@ public final class InventoryTransferService {
             boolean preserveHotbar,
             IntPredicate protectedSlot,
             DepositMode mode) {
-        Inventory inventory = player.getInventory();
+        return moveInventory(player.getInventory(), destinations, preserveHotbar, protectedSlot, mode);
+    }
+
+    static TransferResult moveInventory(Inventory inventory, List<ContainerAccess> destinations,
+                                        boolean preserveHotbar, IntPredicate protectedSlot, DepositMode mode) {
         int firstSlot = preserveHotbar ? InventoryUtil.MAIN_INV_START : InventoryUtil.HOTBAR_START;
         List<SourceSlot> sources = new ArrayList<>(InventoryUtil.MAIN_INV_END - firstSlot);
 

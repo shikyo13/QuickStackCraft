@@ -22,7 +22,11 @@ public final class InventoryRestockService {
             Player player,
             List<ContainerAccess> sources,
             IntPredicate protectedSlot) {
-        Inventory inventory = player.getInventory();
+        return restockInventory(player.getInventory(), sources, protectedSlot);
+    }
+
+    static TransferResult restockInventory(Inventory inventory, List<ContainerAccess> sources,
+                                           IntPredicate protectedSlot) {
         Set<ContainerAccess> changedSources = new LinkedHashSet<>();
         int restoredItems = 0;
 

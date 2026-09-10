@@ -11,9 +11,17 @@ QuickStack & Craft 1.1 supports **Minecraft 1.21.1 and 1.21.4** on **Fabric and 
 
 [Watch the QuickStack & Craft 1.0 showcase](https://www.youtube.com/watch?v=l_6XsxF90Pw)
 
+## Development
+
+The next update is 1.1. See the [roadmap](ROADMAP.md) for planned improvements and the two open community requests.
+
 ## Features
 
 **Inventory and Open-Storage Controls** - Compact Q, R, D, and settings buttons sit beside the vanilla recipe-book control. Supported open-storage screens also expose Quick Stack and Dump controls for their contents.
+
+**Adjustable Buttons** - Hide inventory and open-storage buttons independently, or set their horizontal and vertical offsets in Settings → Buttons. Positions follow the inventory when the recipe book opens and stay within the screen. Keybinds remain available when buttons are hidden; bind Open QuickStack & Craft Settings in Controls to reopen settings.
+
+**Quick Stack Hovered Stack** - Bind this action in Controls, then point at a stack in your inventory and press the key. Only that stack moves to matching nearby storage, including when selected from the hotbar. Native and ItemLocks locks remain protected. Container contents, armor, offhand and the cursor stack are left alone.
 
 **Quick Stack to Nearby** - Deposit items into nearby storage that already holds matching items. Prioritizes fullest containers first.
 
@@ -70,11 +78,12 @@ Install on both the server and all clients. The server handles all item movement
 
 ## Keybinds
 
-The inventory Q, R, D, and settings buttons work immediately. All six keyboard actions are unbound by default under **Options -> Controls -> Key Binds -> QuickStack & Craft**.
+The inventory Q, R, D, and settings buttons work immediately. All seven keyboard actions are unbound by default under **Options -> Controls -> Key Binds -> QuickStack & Craft**.
 
 | Action | Default |
 |-|-|
 | Quick Stack Nearby | Unbound (configure in Controls) |
+| Quick Stack Hovered Stack | Unbound (configure in Controls) |
 | Restock Partial Stacks | Unbound (configure in Controls) |
 | Dump Unlocked Items | Unbound (configure in Controls) |
 | Preview Nearby Storage | Unbound (configure in Controls) |

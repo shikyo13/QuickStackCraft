@@ -20,6 +20,16 @@ public final class InventoryToolbarLayout {
         return inventoryTop + OFFSET_Y;
     }
 
+    public static Position position(int anchorX, int anchorY, int count, int size, int gap,
+                                    int screenWidth, int screenHeight, ToolbarPreferences preferences) {
+        int toolbarWidth = count * size + Math.max(0, count - 1) * gap;
+        int x = Math.clamp(anchorX + preferences.offsetX(), 0, Math.max(0, screenWidth - toolbarWidth));
+        int y = Math.clamp(anchorY + preferences.offsetY(), 0, Math.max(0, screenHeight - size));
+        return new Position(x, y);
+    }
+
+    public record Position(int x, int y) {}
+
     public static double scaledButtonCenterX(int guiX, float scale, int index) {
         return guiX + (OFFSET_X + index * (BUTTON_SIZE + BUTTON_GAP) + BUTTON_SIZE / 2.0D) * scale;
     }

@@ -14,6 +14,7 @@ public final class ModKeybinds {
     public static final String CATEGORY = "key.categories.quickstackcraft";
 
     public static final KeyMapping QUICK_STACK = unbound("quick_stack");
+    public static final KeyMapping QUICK_STACK_HOVERED = unbound("quick_stack_hovered");
     public static final KeyMapping RESTOCK = unbound("restock");
     public static final KeyMapping DUMP_ALL = unbound("dump_all");
     public static final KeyMapping PREVIEW_STORAGE = unbound("preview_storage");
@@ -21,7 +22,7 @@ public final class ModKeybinds {
     public static final KeyMapping CONFIG = unbound("config");
 
     private static final List<KeyMapping> ALL = List.of(
-            QUICK_STACK, RESTOCK, DUMP_ALL, PREVIEW_STORAGE, CYCLE_STORAGE_LIST, CONFIG);
+            QUICK_STACK, QUICK_STACK_HOVERED, RESTOCK, DUMP_ALL, PREVIEW_STORAGE, CYCLE_STORAGE_LIST, CONFIG);
 
     private ModKeybinds() {}
 
