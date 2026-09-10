@@ -14,9 +14,12 @@
 - Added active-menu validation and source exclusion so stale packets are ignored and an open storage block cannot transfer into itself.
 - Added a Restock segment to the animated tutorial using the same toolbar layout, lock marker, and highlight palette as the live interface.
 - Kept AE2 and Refined Storage network blocks outside automatic targeting so their native storage models remain authoritative.
+- Preserved feature parity across Fabric and NeoForge for Minecraft 1.21.1 and 1.21.4.
+
+## 1.0.1
+
 - Fixed Fabric dedicated servers crashing during startup while registering clientbound packets.
 - Added safe automatic recognition for direct Ars Nouveau Repository blocks without targeting aggregate storage networks.
-- Preserved feature parity across Fabric and NeoForge for Minecraft 1.21.1 and 1.21.4.
 
 ## 1.0.0
 
