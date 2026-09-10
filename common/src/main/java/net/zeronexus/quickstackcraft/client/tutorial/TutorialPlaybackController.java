@@ -11,7 +11,7 @@ public final class TutorialPlaybackController {
     private long lastFrameNanos;
 
     public TutorialPlaybackController(double[] durations, int initialScene) {
-        if (durations.length == 0 || Arrays.stream(durations).anyMatch(value -> value <= 0.0D)) {
+        if (durations.length == 0 || Arrays.stream(durations).anyMatch(value -> !Double.isFinite(value) || value <= 0.0D)) {
             throw new IllegalArgumentException("Tutorial scenes require positive durations");
         }
         this.durations = durations.clone();
@@ -31,7 +31,7 @@ public final class TutorialPlaybackController {
     }
 
     public void advance(double deltaSeconds) {
-        if (deltaSeconds <= 0.0D) {
+        if (!Double.isFinite(deltaSeconds) || deltaSeconds <= 0.0D) {
             return;
         }
         elapsedSeconds += deltaSeconds;
@@ -48,6 +48,10 @@ public final class TutorialPlaybackController {
     }
 
     public void togglePaused() {
+        if (paused && elapsedSeconds >= duration() && sceneIndex == durations.length - 1) {
+            replay();
+            return;
+        }
         paused = !paused;
         lastFrameNanos = 0L;
     }
@@ -55,6 +59,17 @@ public final class TutorialPlaybackController {
     public void replay() {
         elapsedSeconds = 0.0D;
         paused = false;
+        lastFrameNanos = 0L;
+    }
+
+    public void seek(double seconds) {
+        if (!Double.isFinite(seconds)) return;
+        elapsedSeconds = Math.max(0.0D, Math.min(duration(), seconds));
+        lastFrameNanos = 0L;
+    }
+
+    public void setPaused(boolean value) {
+        paused = value;
         lastFrameNanos = 0L;
     }
 

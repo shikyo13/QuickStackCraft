@@ -2,6 +2,11 @@
 
 ## 1.1.0 (unreleased)
 
+- Added hover-and-hold access to the animated guide, using the player's forward key.
+- Added a Controls chapter demonstrating the hovered-stack shortcut and button placement, visibility, and reset settings.
+- Added a draggable timeline with keyboard seeking, shorter chapter labels, and consistent pause and replay controls.
+- Pause singleplayer while the guide is open, and keep its controls visible at larger GUI scales.
+- Put native lock information inside the item tooltip so it no longer overlaps the item name.
 - Added a Buttons settings tab with independent visibility and exact pixel offsets for inventory and open-storage controls.
 - Added an optional Quick Stack Hovered Stack keybind. It moves only the selected player-inventory stack, respects slot locks and leaves the cursor stack untouched.
 - Kept toolbars attached to the inventory when the recipe book shifts the screen, and kept moved buttons within the viewport.

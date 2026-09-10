@@ -10,10 +10,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.ChatFormatting;
+import java.util.ArrayList;
+import java.util.List;
 import net.zeronexus.quickstackcraft.client.ClientFavoritesCache;
 import net.zeronexus.quickstackcraft.client.ClientPreferences;
 import net.zeronexus.quickstackcraft.client.InventoryToolbarLayout;
 import net.zeronexus.quickstackcraft.client.ToolbarPreferences;
+import net.zeronexus.quickstackcraft.client.tutorial.TutorialHover;
 import net.zeronexus.quickstackcraft.client.ModKeybinds;
 import net.zeronexus.quickstackcraft.client.QuickStackConfigScreen;
 import net.zeronexus.quickstackcraft.client.UiIcon;
@@ -73,6 +78,10 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
                 Component.translatable("quickstackcraft.button.config"),
                 button -> QuickStackConfigScreen.open(this)));
         quickstackcraft$storageButtons = new Button[] {quickStack, dump, settings};
+        for (Button button : quickstackcraft$storageButtons) {
+            button.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+                    button.getMessage().copy().append("\n").append(TutorialHover.hint())));
+        }
         quickstackcraft$positionStorageButtons();
     }
 
@@ -80,6 +89,19 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
     private void quickstackcraft$updateStorageButtons(GuiGraphics graphics, int mouseX, int mouseY,
                                                      float delta, CallbackInfo ci) {
         quickstackcraft$positionStorageButtons();
+    }
+
+    @Inject(method = "render", at = @At("TAIL"))
+    private void quickstackcraft$hoverStorageLesson(GuiGraphics graphics, int mouseX, int mouseY,
+                                                   float delta, CallbackInfo ci) {
+        if (quickstackcraft$storageButtons.length > 0) {
+            int chapter = -1;
+            for (int index = 0; index < quickstackcraft$storageButtons.length; index++) {
+                Button button = quickstackcraft$storageButtons[index];
+                if (button.visible && button.isMouseOver(mouseX, mouseY)) chapter = index == 2 ? 3 : 0;
+            }
+            TutorialHover.update(this, graphics, mouseX, mouseY, chapter);
+        }
     }
 
     @Unique
@@ -117,7 +139,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
                 int y = this.topPos + slot.y;
                 quickstackcraft$renderLockBorder(graphics, x, y, 0xFFF2C14E);
                 UiIcon.renderLock(graphics, x + 9, y + 1, 0xFFF9D36A);
-                if (this.isHovering(slot.x, slot.y, 16, 16, mouseX, mouseY)) {
+                if (!slot.hasItem() && this.isHovering(slot.x, slot.y, 16, 16, mouseX, mouseY)) {
                     hoveredTooltip = Component.translatable("quickstackcraft.tooltip.native_lock");
                 }
             }
@@ -125,6 +147,18 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         if (hoveredTooltip != null) {
             graphics.renderTooltip(this.font, hoveredTooltip, mouseX, mouseY);
         }
+    }
+
+    @Inject(method = "getTooltipFromContainerItem", at = @At("RETURN"), cancellable = true)
+    private void quickstackcraft$appendLockTooltip(ItemStack stack, CallbackInfoReturnable<List<Component>> cir) {
+        if (this.hoveredSlot == null || !quickstackcraft$isPlayerInventorySlot(this.hoveredSlot)
+                || this.hoveredSlot.getItem() != stack) return;
+        int index = this.hoveredSlot.getContainerSlot();
+        if (!ClientFavoritesCache.isFavorited(index)
+                || (ExternalSlotLocks.renderSnapshot() & (1L << index)) != 0) return;
+        List<Component> tooltip = new ArrayList<>(cir.getReturnValue());
+        tooltip.add(Component.translatable("quickstackcraft.tooltip.native_lock").withStyle(ChatFormatting.GOLD));
+        cir.setReturnValue(tooltip);
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
@@ -155,7 +189,9 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
                 || this.getFocused() instanceof EditBox editBox && editBox.isFocused()) {
             return;
         }
-        if (ModKeybinds.QUICK_STACK_HOVERED.matches(keyCode, scanCode)) {
+        if (TutorialHover.consumes(this, keyCode, scanCode)) {
+            cir.setReturnValue(true);
+        } else if (ModKeybinds.QUICK_STACK_HOVERED.matches(keyCode, scanCode)) {
             quickstackcraft$sendHoveredStack();
             cir.setReturnValue(true);
         } else if (ModKeybinds.QUICK_STACK.matches(keyCode, scanCode)) {

@@ -11,6 +11,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.zeronexus.quickstackcraft.client.InventoryToolbarLayout;
 import net.zeronexus.quickstackcraft.client.ClientPreferences;
 import net.zeronexus.quickstackcraft.client.ToolbarPreferences;
+import net.zeronexus.quickstackcraft.client.tutorial.TutorialHover;
 import net.zeronexus.quickstackcraft.client.QuickStackConfigScreen;
 import net.zeronexus.quickstackcraft.client.UiIcon;
 import net.zeronexus.quickstackcraft.client.UiIconButton;
@@ -46,7 +47,7 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
                 .bounds(InventoryToolbarLayout.buttonX(this.leftPos, 0), btnY, btnSize, btnSize)
                 .build();
         quickstackcraft$quickStackButton.setTooltip(Tooltip.create(
-                Component.translatable("quickstackcraft.button.quick_stack")));
+                Component.translatable("quickstackcraft.button.quick_stack").append("\n").append(TutorialHover.hint())));
         quickstackcraft$quickStackButton.setTooltipDelay(Duration.ofMillis(250));
 
         quickstackcraft$restockButton = Button.builder(
@@ -56,7 +57,7 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
                 .bounds(InventoryToolbarLayout.buttonX(this.leftPos, 1), btnY, btnSize, btnSize)
                 .build();
         quickstackcraft$restockButton.setTooltip(Tooltip.create(
-                Component.translatable("quickstackcraft.button.restock")));
+                Component.translatable("quickstackcraft.button.restock").append("\n").append(TutorialHover.hint())));
         quickstackcraft$restockButton.setTooltipDelay(Duration.ofMillis(250));
 
         quickstackcraft$dumpButton = Button.builder(
@@ -66,7 +67,7 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
                 .bounds(InventoryToolbarLayout.buttonX(this.leftPos, 2), btnY, btnSize, btnSize)
                 .build();
         quickstackcraft$dumpButton.setTooltip(Tooltip.create(
-                Component.translatable("quickstackcraft.button.dump_all")));
+                Component.translatable("quickstackcraft.button.dump_all").append("\n").append(TutorialHover.hint())));
         quickstackcraft$dumpButton.setTooltipDelay(Duration.ofMillis(250));
 
         quickstackcraft$configButton = new UiIconButton(
@@ -77,6 +78,8 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
         this.addRenderableWidget(quickstackcraft$quickStackButton);
         this.addRenderableWidget(quickstackcraft$restockButton);
         this.addRenderableWidget(quickstackcraft$dumpButton);
+        quickstackcraft$configButton.setTooltip(Tooltip.create(
+                Component.translatable("quickstackcraft.button.config").append("\n").append(TutorialHover.hint())));
         this.addRenderableWidget(quickstackcraft$configButton);
         quickstackcraft$positionButtons();
     }
@@ -85,6 +88,19 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
     private void quickstackcraft$updateButtons(GuiGraphics graphics, int mouseX, int mouseY,
                                                float delta, CallbackInfo ci) {
         quickstackcraft$positionButtons();
+    }
+
+    @Inject(method = "render", at = @At("TAIL"))
+    private void quickstackcraft$hoverLesson(GuiGraphics graphics, int mouseX, int mouseY,
+                                            float delta, CallbackInfo ci) {
+        int chapter = -1;
+        if (quickstackcraft$quickStackButton != null && quickstackcraft$quickStackButton.visible) {
+            if (quickstackcraft$quickStackButton.isMouseOver(mouseX, mouseY)
+                    || quickstackcraft$restockButton.isMouseOver(mouseX, mouseY)
+                    || quickstackcraft$dumpButton.isMouseOver(mouseX, mouseY)) chapter = 0;
+            else if (quickstackcraft$configButton.isMouseOver(mouseX, mouseY)) chapter = 3;
+        }
+        TutorialHover.update(this, graphics, mouseX, mouseY, chapter);
     }
 
     @Unique

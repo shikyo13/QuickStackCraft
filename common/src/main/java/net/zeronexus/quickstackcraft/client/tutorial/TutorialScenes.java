@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.zeronexus.quickstackcraft.client.InventoryToolbarLayout;
 import net.zeronexus.quickstackcraft.client.StorageHighlightPalette;
 import net.zeronexus.quickstackcraft.client.UiIcon;
+import net.zeronexus.quickstackcraft.client.ToolbarPreferences;
 import net.zeronexus.quickstackcraft.logic.StorageListState;
 
 import java.util.ArrayList;
@@ -23,7 +24,8 @@ public final class TutorialScenes {
             new CombinedScene("inventory_management", QUICK_STACK, RESTOCK, DUMP_AND_LOCKS),
             new CraftNearbyScene(),
             new CombinedScene(
-                    "whitelist_blacklist_preview", WHITELIST_BLACKLIST, STORAGE_PREVIEW));
+                    "whitelist_blacklist_preview", WHITELIST_BLACKLIST, STORAGE_PREVIEW),
+            new CombinedScene("controls", new HoveredStackScene(), new ButtonSettingsScene()));
 
     private TutorialScenes() {}
 
@@ -118,6 +120,61 @@ public final class TutorialScenes {
                 total += segment.durationSeconds();
             }
             return total;
+        }
+    }
+
+    private static final class HoveredStackScene extends BaseScene {
+        private HoveredStackScene() { super("hovered_stack", 20); }
+
+        @Override public Component caption(double time) {
+            return caption(time < 5 ? 1 : time < 10 ? 2 : time < 15 ? 3 : 4);
+        }
+
+        @Override public void render(TutorialRenderContext context, double time) {
+            context.beginScene(0, 0, 1);
+            context.renderWorldBackdrop();
+            boolean moved = time >= 12;
+            var items = new ArrayList<TutorialRenderContext.SlotItem>();
+            if (!moved) items.add(slot(9, new ItemStack(Items.COBBLESTONE, 32)));
+            items.add(slot(10, new ItemStack(Items.COBBLESTONE, 16)));
+            items.add(locked(11, new ItemStack(Items.DIAMOND, 3)));
+            context.renderInventoryGui(138, 8, 0.78F, items);
+            context.renderChest(385, 147, 43, 1, moved ? StorageHighlightPalette.destinationArgb() : 0);
+            context.renderCursor(152, 80, false);
+            if (time >= 10 && time < 12) {
+                double progress = context.transition(time, 10, 12);
+                context.renderItem(new ItemStack(Items.COBBLESTONE),
+                        curve(151, 205, 315, 384, progress), curve(79, 10, 10, 116, progress), 0.9F);
+            }
+            context.renderBadge(213, 149, Component.translatable("quickstackcraft.tutorial.hovered_stack.badge"),
+                    0xFF80D9EF, UiIcon.QUICK_STACK);
+            context.endScene();
+        }
+    }
+
+    private static final class ButtonSettingsScene extends BaseScene {
+        private ButtonSettingsScene() { super("button_settings", 20); }
+
+        @Override public Component caption(double time) {
+            return caption(time < 5 ? 1 : time < 10 ? 2 : time < 15 ? 3 : 4);
+        }
+
+        @Override public void render(TutorialRenderContext context, double time) {
+            context.beginScene(0, 0, 1);
+            context.renderWorldBackdrop();
+            boolean visible = time < 11 || time >= 16;
+            int offsetX = time < 5 || time >= 16 ? 0 : -28;
+            int offsetY = time < 5 || time >= 16 ? 0 : -14;
+            context.renderButtonSettings(54, 22, visible, offsetX, offsetY);
+            context.renderInventoryGui(266, 18, 0.82F,
+                    List.of(slot(9, new ItemStack(Items.COBBLESTONE, 32))),
+                    new ToolbarPreferences(visible, offsetX, offsetY));
+            double cursorX = time >= 5 && time < 10 ? 192 : 138;
+            double cursorY = time < 5 ? 50 : time < 10 ? 85 : time < 15 ? 67 : 128;
+            context.renderCursor(cursorX, cursorY, time >= 10.5 && time < 11.5 || time >= 15.5 && time < 16.5);
+            context.renderBadge(240, 153, Component.translatable("quickstackcraft.tutorial.button_settings.badge"),
+                    0xFFFFD34E, UiIcon.SETTINGS);
+            context.endScene();
         }
     }
 

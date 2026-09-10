@@ -48,4 +48,33 @@ class TutorialTimelineTest {
         assertEquals(1, playback.sceneIndex());
         assertEquals(0.5D, playback.elapsedSeconds(), 0.0001D);
     }
+    @Test
+    void seekingStaysWithinTheCurrentChapterAndDoesNotResumePlayback() {
+        TutorialPlaybackController playback = new TutorialPlaybackController(new double[] {10, 20}, 0);
+        playback.setPaused(true);
+        playback.seek(100);
+        assertEquals(0, playback.sceneIndex());
+        assertEquals(10, playback.elapsedSeconds());
+        assertTrue(playback.paused());
+        playback.seek(-4);
+        assertEquals(0, playback.elapsedSeconds());
+        playback.seek(7);
+        playback.seek(Double.NaN);
+        assertEquals(7, playback.elapsedSeconds());
+        playback.onFrame(1_000_000_000L);
+        playback.onFrame(2_000_000_000L);
+        assertEquals(7, playback.elapsedSeconds());
+    }
+
+    @Test
+    void playAfterTheLastFrameRestartsTheFinalChapter() {
+        TutorialPlaybackController playback = new TutorialPlaybackController(new double[] {10, 20}, 1);
+        playback.advance(20);
+        assertTrue(playback.paused());
+        playback.togglePaused();
+        assertEquals(1, playback.sceneIndex());
+        assertEquals(0, playback.elapsedSeconds());
+        assertFalse(playback.paused());
+    }
+
 }

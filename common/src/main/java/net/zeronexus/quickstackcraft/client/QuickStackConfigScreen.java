@@ -488,7 +488,7 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
                 Component.translatable("quickstackcraft.config.tutorial"),
                 pressed -> {
                     persistClientPreferences();
-                    TutorialScreen.open(this);
+                    TutorialScreen.open(this, activeTab == Tab.BUTTONS ? 3 : activeTab == Tab.STORAGE ? 2 : 0);
                 });
         tutorial.active = !saving;
         UiIconButton about = addIconButton(layout.contentLeft() + 24, y, 20, UiIcon.ABOUT,
