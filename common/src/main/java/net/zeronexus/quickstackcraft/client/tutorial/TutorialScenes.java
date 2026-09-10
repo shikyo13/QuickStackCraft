@@ -139,9 +139,9 @@ public final class TutorialScenes {
             items.add(slot(10, new ItemStack(Items.COBBLESTONE, 16)));
             items.add(locked(11, new ItemStack(Items.DIAMOND, 3)));
             context.renderInventoryGui(138, 8, 0.78F, items);
-            context.renderInventorySlotHighlight(138, 8, 0.78F, 9, 0xFF80D9EF);
+            context.renderInventorySlotHighlight(138, 8, 0.78F, moved ? 10 : 9, 0xFF80D9EF);
             context.renderChest(385, 147, 43, 1, moved ? StorageHighlightPalette.destinationArgb() : 0);
-            context.renderCursor(156, 78, false);
+            if (!moved) context.renderCursor(156, 78, false);
             if (time >= 10 && time < 12) {
                 double progress = context.transition(time, 10, 12);
                 context.renderItem(new ItemStack(Items.COBBLESTONE),
