@@ -212,6 +212,15 @@ final class MinecraftTutorialRenderContext implements TutorialRenderContext {
     }
 
     @Override
+    public void renderInventorySlotHighlight(int x, int y, float scale, int slot, int color) {
+        withGuiScale(x, y, scale, () -> {
+            int slotX = 8 + (slot % 9) * 18;
+            int slotY = slot < 9 ? 142 : 84 + ((slot - 9) / 9) * 18;
+            graphics.renderOutline(slotX - 1, slotY - 1, 18, 18, color);
+        });
+    }
+
+    @Override
     public void renderButtonSettings(int x, int y, boolean visible, int offsetX, int offsetY) {
         withGuiScale(x, y, 0.75F, () -> {
             graphics.fill(0, 0, 228, 168, 0xF0111315);
@@ -334,12 +343,13 @@ final class MinecraftTutorialRenderContext implements TutorialRenderContext {
     @Override
     public void renderBadge(int centerX, int y, Component text, int color, UiIcon icon) {
         Font font = minecraft.font;
-        int width = font.width(text) + 26;
+        int textOffset = icon == null ? 6 : 19;
+        int width = font.width(text) + textOffset + 7;
         int left = centerX - width / 2;
         graphics.fill(left, y, left + width, y + 18, 0xE0181A1C);
         graphics.renderOutline(left, y, width, 18, color);
-        icon.render(graphics, left + 3, y + 3, color);
-        graphics.drawString(font, text, left + 19, y + 5, 0xFFFFFFFF, false);
+        if (icon != null) icon.render(graphics, left + 3, y + 3, color);
+        graphics.drawString(font, text, left + textOffset, y + 5, 0xFFFFFFFF, false);
     }
 
     private void renderGuiTexture(ResourceLocation texture, int x, int y, float scale, int width, int height) {

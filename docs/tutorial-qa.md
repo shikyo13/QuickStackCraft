@@ -24,5 +24,9 @@ Watched the original Inventory, Crafting, and Storage chapters before the final 
 - The new Controls scenes demonstrated the selected-stack action, locks, offsets, hiding, and reset.
 - Clicking the timeline paused at the selected step. Arrow-key seeking moved five seconds while remaining paused.
 - The guide pauses singleplayer; multiplayer servers continue running normally.
+- The rebuilt lock tooltip displayed the item name and native lock information on separate lines.
+- GUI scales 2 and 4 kept chapter buttons, captions, and transport controls readable.
+
+The final callout revision replaces the generic transfer symbol with an outline around the selected slot and the labels “Move this stack” and “The other stack stays here.” It has build and translation coverage; its final appearance has not been rechecked in Minecraft.
 
 Fabric gameplay, Minecraft 1.21.4 gameplay, multiplayer, and optional backpack integrations are not covered by this session. Automated transfer tests cover additional item-conservation and stale-menu cases.

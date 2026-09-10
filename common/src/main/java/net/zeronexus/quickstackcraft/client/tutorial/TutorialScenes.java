@@ -135,19 +135,22 @@ public final class TutorialScenes {
             context.renderWorldBackdrop();
             boolean moved = time >= 12;
             var items = new ArrayList<TutorialRenderContext.SlotItem>();
-            if (!moved) items.add(slot(9, new ItemStack(Items.COBBLESTONE, 32)));
+            if (time < 10) items.add(slot(9, new ItemStack(Items.COBBLESTONE, 32)));
             items.add(slot(10, new ItemStack(Items.COBBLESTONE, 16)));
             items.add(locked(11, new ItemStack(Items.DIAMOND, 3)));
             context.renderInventoryGui(138, 8, 0.78F, items);
+            context.renderInventorySlotHighlight(138, 8, 0.78F, 9, 0xFF80D9EF);
             context.renderChest(385, 147, 43, 1, moved ? StorageHighlightPalette.destinationArgb() : 0);
-            context.renderCursor(152, 80, false);
+            context.renderCursor(156, 78, false);
             if (time >= 10 && time < 12) {
                 double progress = context.transition(time, 10, 12);
                 context.renderItem(new ItemStack(Items.COBBLESTONE),
                         curve(151, 205, 315, 384, progress), curve(79, 10, 10, 116, progress), 0.9F);
             }
-            context.renderBadge(213, 149, Component.translatable("quickstackcraft.tutorial.hovered_stack.badge"),
-                    0xFF80D9EF, UiIcon.QUICK_STACK);
+            context.renderBadge(213, 149, Component.translatable(moved
+                            ? "quickstackcraft.tutorial.hovered_stack.moved"
+                            : "quickstackcraft.tutorial.hovered_stack.badge"),
+                    0xFF80D9EF, null);
             context.endScene();
         }
     }
