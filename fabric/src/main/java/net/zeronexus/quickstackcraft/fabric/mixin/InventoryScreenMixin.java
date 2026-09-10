@@ -1,6 +1,7 @@
 package net.zeronexus.quickstackcraft.fabric.mixin;
 
 import dev.architectury.networking.NetworkManager;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -8,6 +9,8 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.zeronexus.quickstackcraft.client.InventoryToolbarLayout;
+import net.zeronexus.quickstackcraft.client.ClientPreferences;
+import net.zeronexus.quickstackcraft.client.ToolbarPreferences;
 import net.zeronexus.quickstackcraft.client.QuickStackConfigScreen;
 import net.zeronexus.quickstackcraft.client.UiIcon;
 import net.zeronexus.quickstackcraft.client.UiIconButton;
@@ -75,5 +78,32 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
         this.addRenderableWidget(quickstackcraft$restockButton);
         this.addRenderableWidget(quickstackcraft$dumpButton);
         this.addRenderableWidget(quickstackcraft$configButton);
+        quickstackcraft$positionButtons();
+    }
+
+    @Inject(method = "render", at = @At("HEAD"))
+    private void quickstackcraft$updateButtons(GuiGraphics graphics, int mouseX, int mouseY,
+                                               float delta, CallbackInfo ci) {
+        quickstackcraft$positionButtons();
+    }
+
+    @Unique
+    private void quickstackcraft$positionButtons() {
+        if (quickstackcraft$quickStackButton == null) {
+            return;
+        }
+        ToolbarPreferences preferences = ClientPreferences.inventoryToolbar();
+        InventoryToolbarLayout.Position position = InventoryToolbarLayout.position(
+                InventoryToolbarLayout.buttonX(this.leftPos, 0), InventoryToolbarLayout.buttonY(this.topPos),
+                4, InventoryToolbarLayout.BUTTON_SIZE, InventoryToolbarLayout.BUTTON_GAP,
+                this.width, this.height, preferences);
+        Button[] buttons = {quickstackcraft$quickStackButton, quickstackcraft$restockButton,
+                quickstackcraft$dumpButton, quickstackcraft$configButton};
+        for (int index = 0; index < buttons.length; index++) {
+            buttons[index].setPosition(position.x() + index * (InventoryToolbarLayout.BUTTON_SIZE
+                    + InventoryToolbarLayout.BUTTON_GAP), position.y());
+            buttons[index].visible = preferences.visible();
+            buttons[index].active = preferences.visible();
+        }
     }
 }

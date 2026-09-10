@@ -1,7 +1,12 @@
 # Changelog
 
-## 1.1.0
+## 1.1.0 (unreleased)
 
+- Added a Buttons settings tab with independent visibility and exact pixel offsets for inventory and open-storage controls.
+- Added an optional Quick Stack Hovered Stack keybind. It moves only the selected player-inventory stack, respects slot locks and leaves the cursor stack untouched.
+- Kept toolbars attached to the inventory when the recipe book shifts the screen, and kept moved buttons within the viewport.
+- Added feedback for a locked stack, occupied cursor, changed inventory and matching storage without space.
+- Fixed the executable permission on the Gradle wrapper so the documented build command works on macOS and Linux.
 - Added Restock Partial Stacks, which fills existing unlocked inventory and hotbar stacks from nearby storage without occupying empty slots.
 - Added a compact R inventory control and an unbound Restock key under the QuickStack & Craft controls category.
 - Added cyan source-storage outlines and action-bar feedback for successful restocks.

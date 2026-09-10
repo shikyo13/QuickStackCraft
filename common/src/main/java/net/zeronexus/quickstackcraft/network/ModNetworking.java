@@ -70,6 +70,12 @@ public final class ModNetworking {
                 InventoryActionC2SPacket.CODEC,
                 ModNetworking::handleInventoryAction
         );
+        NetworkManager.registerReceiver(
+                NetworkManager.Side.C2S,
+                QuickStackSlotC2SPacket.TYPE,
+                QuickStackSlotC2SPacket.CODEC,
+                ModNetworking::handleQuickStackSlot
+        );
 
         // C2S/S2C: in-game configuration screen
         NetworkManager.registerReceiver(
@@ -228,6 +234,9 @@ public final class ModNetworking {
             InventoryActionC2SPacket packet, NetworkManager.PacketContext context) {
         context.queue(() -> {
             ServerPlayer player = (ServerPlayer) context.getPlayer();
+            if (player.isSpectator()) {
+                return;
+            }
             List<ContainerAccess> containers = nearbyStorage(player);
 
             boolean restocking = packet.action() == InventoryActionC2SPacket.Action.RESTOCK;
@@ -267,6 +276,50 @@ public final class ModNetworking {
                                 ? "quickstackcraft.message.nothing_to_dump"
                                 : "quickstackcraft.message.nothing_to_stack";
                 player.displayClientMessage(Component.translatable(messageKey), true);
+            }
+        });
+    }
+
+    private static void handleQuickStackSlot(QuickStackSlotC2SPacket packet, NetworkManager.PacketContext context) {
+        context.queue(() -> {
+            ServerPlayer player = (ServerPlayer) context.getPlayer();
+            net.minecraft.world.inventory.AbstractContainerMenu activeMenu = player.containerMenu;
+            int selectedSlot = packet.inventorySlot();
+            if (player.isSpectator() || selectedSlot < 0 || selectedSlot >= 36
+                    || activeMenu.containerId != packet.containerId() || !activeMenu.stillValid(player)) {
+                return;
+            }
+            if (activeMenu.getStateId() != packet.stateId()) {
+                player.displayClientMessage(Component.translatable("quickstackcraft.message.inventory_changed"), true);
+                return;
+            }
+            if (!activeMenu.getCarried().isEmpty()) {
+                player.displayClientMessage(Component.translatable("quickstackcraft.message.cursor_occupied"), true);
+                return;
+            }
+            boolean accessible = activeMenu.slots.stream().anyMatch(slot -> slot.container == player.getInventory()
+                    && slot.getContainerSlot() == selectedSlot && slot.isActive() && slot.mayPickup(player));
+            if (!accessible || player.getInventory().getItem(selectedSlot).isEmpty()) {
+                return;
+            }
+            if (FavoritesManager.isFavorited(player, selectedSlot) || packet.protects(selectedSlot)) {
+                player.displayClientMessage(Component.translatable("quickstackcraft.message.stack_locked"), true);
+                return;
+            }
+            List<ContainerAccess> containers = nearbyStorage(player);
+            if (containers.isEmpty()) {
+                player.displayClientMessage(Component.translatable("quickstackcraft.message.no_nearby_storage"), true);
+                return;
+            }
+            TransferResult result = InventoryTransferService.movePlayerInventory(player, containers, false,
+                    slot -> slot != selectedSlot, InventoryTransferService.DepositMode.MATCHING_STORAGE);
+            activeMenu.broadcastChanges();
+            if (result.didSomething()) {
+                player.displayClientMessage(Component.translatable("quickstackcraft.message.quick_stack",
+                        result.itemsMoved(), result.containersUsed()), true);
+                sendHighlights(player, result, ContainerHighlightS2CPacket.HighlightKind.DESTINATION);
+            } else {
+                player.displayClientMessage(Component.translatable("quickstackcraft.message.hovered_stack_no_room"), true);
             }
         });
     }

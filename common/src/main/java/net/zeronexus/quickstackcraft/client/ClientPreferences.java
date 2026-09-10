@@ -19,6 +19,8 @@ public final class ClientPreferences {
     private static String outlineRgb = DEFAULT_RGB;
     private static double outlineOpacity = DEFAULT_OPACITY;
     private static int outlineLifetimeMs = DEFAULT_LIFETIME_MS;
+    private static ToolbarPreferences inventoryToolbar = ToolbarPreferences.DEFAULT;
+    private static ToolbarPreferences storageToolbar = ToolbarPreferences.DEFAULT;
     private static boolean initialized;
 
     private ClientPreferences() {}
@@ -44,6 +46,8 @@ public final class ClientPreferences {
             outlineRgb = sanitizeRgb(values.getProperty("outlineColor"), DEFAULT_RGB);
             outlineOpacity = clamp(number(values.getProperty("outlineOpacity"), DEFAULT_OPACITY), 0.0D, 1.0D);
             outlineLifetimeMs = clamp(integer(values.getProperty("outlineLifetimeMs"), DEFAULT_LIFETIME_MS), 100, 60000);
+            inventoryToolbar = ToolbarPreferences.read(values, "inventoryButtons");
+            storageToolbar = ToolbarPreferences.read(values, "storageButtons");
         } catch (IOException ignored) {
         }
     }
@@ -52,12 +56,24 @@ public final class ClientPreferences {
         outlineRgb = sanitizeRgb(requested.rgb(), DEFAULT_RGB);
         outlineOpacity = clamp(requested.opacity(), 0.0D, 1.0D);
         outlineLifetimeMs = clamp(requested.lifetimeMs(), 100, 60000);
+        inventoryToolbar = requested.inventoryToolbar();
+        storageToolbar = requested.storageToolbar();
         writeFile();
     }
 
     public static Snapshot snapshot() {
         load();
-        return new Snapshot(outlineRgb, outlineOpacity, outlineLifetimeMs);
+        return new Snapshot(outlineRgb, outlineOpacity, outlineLifetimeMs, inventoryToolbar, storageToolbar);
+    }
+
+    public static ToolbarPreferences inventoryToolbar() {
+        load();
+        return inventoryToolbar;
+    }
+
+    public static ToolbarPreferences storageToolbar() {
+        load();
+        return storageToolbar;
     }
 
     public static String outlineRgb() {
@@ -91,6 +107,8 @@ public final class ClientPreferences {
             values.setProperty("outlineColor", outlineRgb);
             values.setProperty("outlineOpacity", Double.toString(outlineOpacity));
             values.setProperty("outlineLifetimeMs", Integer.toString(outlineLifetimeMs));
+            inventoryToolbar.write(values, "inventoryButtons");
+            storageToolbar.write(values, "storageButtons");
             try (Writer output = Files.newBufferedWriter(path)) {
                 values.store(output, "QuickStack & Craft visual preferences");
             }
@@ -123,9 +141,10 @@ public final class ClientPreferences {
     }
 
     private static double clamp(double value, double minimum, double maximum) {
-        return Math.max(minimum, Math.min(maximum, value));
+        return Double.isFinite(value) ? Math.max(minimum, Math.min(maximum, value)) : DEFAULT_OPACITY;
     }
 
-    public record Snapshot(String rgb, double opacity, int lifetimeMs) {
+    public record Snapshot(String rgb, double opacity, int lifetimeMs,
+                           ToolbarPreferences inventoryToolbar, ToolbarPreferences storageToolbar) {
     }
 }

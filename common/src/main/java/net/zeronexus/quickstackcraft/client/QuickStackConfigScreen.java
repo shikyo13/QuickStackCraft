@@ -72,6 +72,9 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
     private String outlineColor;
     private double outlineOpacity;
     private int outlineLifetimeMs;
+    private ToolbarPreferences inventoryToolbar;
+    private ToolbarPreferences storageToolbar;
+    private boolean editingStorageToolbar;
     private boolean loaded;
     private boolean canEdit;
     private boolean dirtyServer;
@@ -95,7 +98,8 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
     private enum Tab {
         GENERAL("quickstackcraft.config.tab.general"),
         STORAGE("quickstackcraft.config.tab.storage"),
-        APPEARANCE("quickstackcraft.config.tab.appearance");
+        APPEARANCE("quickstackcraft.config.tab.appearance"),
+        BUTTONS("quickstackcraft.config.tab.buttons");
 
         private final String translationKey;
 
@@ -121,6 +125,8 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
         outlineColor = client.rgb();
         outlineOpacity = client.opacity();
         outlineLifetimeMs = client.lifetimeMs();
+        inventoryToolbar = client.inventoryToolbar();
+        storageToolbar = client.storageToolbar();
         loaded = false;
     }
 
@@ -196,15 +202,22 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
             case GENERAL -> addGeneralWidgets(layout);
             case STORAGE -> addStorageWidgets(layout);
             case APPEARANCE -> addAppearanceWidgets(layout);
+            case BUTTONS -> addToolbarWidgets(layout);
         }
         addFooter(layout);
     }
 
     private void addTabs(Layout layout) {
         int gap = 2;
-        int width = (layout.contentWidth() - gap * 2) / 3;
+        int available = layout.contentWidth() - gap * (Tab.values().length - 1);
+        int totalLabelWidth = 0;
+        for (Tab tab : Tab.values()) {
+            totalLabelWidth += font.width(Component.translatable(tab.translationKey)) + 8;
+        }
         int x = layout.contentLeft();
         for (Tab tab : Tab.values()) {
+            int width = tab == Tab.BUTTONS ? layout.contentLeft() + layout.contentWidth() - x
+                    : available * (font.width(Component.translatable(tab.translationKey)) + 8) / totalLabelWidth;
             Button button = addButton(x, layout.tabY(), width, 20,
                     Component.translatable(tab.translationKey),
                     Component.translatable(tab.translationKey + ".tooltip"),
@@ -390,6 +403,82 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
                 () -> outlineLifetimeMs = Math.min(10000, outlineLifetimeMs + 500),
                 !saving, this::markClientDirty);
 
+    }
+
+    private void addToolbarWidgets(Layout layout) {
+        int x = layout.contentLeft();
+        int y = layout.contentTop() + 16;
+        int width = layout.contentWidth();
+        int half = (width - 2) / 2;
+        for (int index = 0; index < 2; index++) {
+            boolean storage = index == 1;
+            String key = storage ? "storage_buttons" : "inventory_buttons";
+            Button target = addButton(x + index * (half + 2), y, half, 20,
+                    Component.translatable("quickstackcraft.config." + key),
+                    Component.translatable("quickstackcraft.config." + key + ".tooltip"), pressed -> {
+                        editingStorageToolbar = storage;
+                        rebuildSettingsWidgets();
+                    });
+            target.active = storage != editingStorageToolbar;
+        }
+        ToolbarPreferences toolbar = selectedToolbar();
+        addButton(x, y + 22, width, 20,
+                Component.translatable(toolbar.visible()
+                        ? "quickstackcraft.config.buttons_shown" : "quickstackcraft.config.buttons_hidden"),
+                Component.translatable("quickstackcraft.config.buttons_visibility.tooltip"), pressed -> {
+                    setSelectedToolbar(new ToolbarPreferences(!toolbar.visible(), toolbar.offsetX(), toolbar.offsetY()));
+                    rebuildSettingsWidgets();
+                });
+        addToolbarOffset(x, y + 44, width, true, toolbar.offsetX());
+        addToolbarOffset(x, y + 66, width, false, toolbar.offsetY());
+        addButton(x, y + 88, width, 20,
+                Component.translatable("quickstackcraft.config.reset_button_position"),
+                Component.translatable("quickstackcraft.config.reset_button_position.tooltip"), pressed -> {
+                    setSelectedToolbar(new ToolbarPreferences(selectedToolbar().visible(), 0, 0));
+                    rebuildSettingsWidgets();
+                });
+    }
+
+    private void addToolbarOffset(int x, int y, int width, boolean horizontal, int current) {
+        String key = horizontal ? "button_offset_x" : "button_offset_y";
+        EditBox field = new EditBox(font, x + width - 66, y, 66, 20,
+                Component.translatable("quickstackcraft.config." + key));
+        field.setMaxLength(5);
+        field.setFilter(value -> {
+            if (value.isEmpty() || value.equals("-")) {
+                return true;
+            }
+            try {
+                return Math.abs((long) Integer.parseInt(value)) <= ToolbarPreferences.MAX_OFFSET;
+            } catch (NumberFormatException ignored) {
+                return false;
+            }
+        });
+        field.setValue(Integer.toString(current));
+        field.setTooltip(Tooltip.create(Component.translatable("quickstackcraft.config.button_offset.tooltip")));
+        field.setResponder(value -> {
+            if (value.equals("-")) {
+                return;
+            }
+            int offset = value.isEmpty() ? 0 : Integer.parseInt(value);
+            ToolbarPreferences toolbar = selectedToolbar();
+            setSelectedToolbar(new ToolbarPreferences(toolbar.visible(),
+                    horizontal ? offset : toolbar.offsetX(), horizontal ? toolbar.offsetY() : offset));
+        });
+        addSettingsWidget(field);
+    }
+
+    private ToolbarPreferences selectedToolbar() {
+        return editingStorageToolbar ? storageToolbar : inventoryToolbar;
+    }
+
+    private void setSelectedToolbar(ToolbarPreferences toolbar) {
+        if (editingStorageToolbar) {
+            storageToolbar = toolbar;
+        } else {
+            inventoryToolbar = toolbar;
+        }
+        dirtyClient = true;
     }
 
     private void addFooter(Layout layout) {
@@ -634,7 +723,7 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
         outlineColor = colorBox == null ? outlineColor : colorBox.getValue();
         String sanitizedColor = ClientPreferences.sanitizeRgb(outlineColor, ClientPreferences.DEFAULT_RGB);
         ClientPreferences.apply(new ClientPreferences.Snapshot(
-                sanitizedColor, outlineOpacity, outlineLifetimeMs));
+                sanitizedColor, outlineOpacity, outlineLifetimeMs, inventoryToolbar, storageToolbar));
         outlineColor = sanitizedColor;
         dirtyClient = false;
     }
@@ -699,6 +788,7 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
             case GENERAL -> "quickstackcraft.config.section.general";
             case STORAGE -> "quickstackcraft.config.section.storage";
             case APPEARANCE -> "quickstackcraft.config.section.appearance";
+            case BUTTONS -> "quickstackcraft.config.section.buttons";
         }), layout.contentLeft(), layout.contentTop() + 2, sectionColor, false);
 
         if (activeTab == Tab.STORAGE) {
@@ -706,12 +796,17 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
             renderTargetAreas(graphics);
         } else if (activeTab == Tab.APPEARANCE) {
             renderAppearancePreview(graphics, layout);
+        } else if (activeTab == Tab.BUTTONS) {
+            graphics.drawString(font, Component.translatable("quickstackcraft.config.button_offset_x"),
+                    layout.contentLeft(), layout.contentTop() + 66, 0xFFE4E4E4, false);
+            graphics.drawString(font, Component.translatable("quickstackcraft.config.button_offset_y"),
+                    layout.contentLeft(), layout.contentTop() + 88, 0xFFE4E4E4, false);
         }
 
         Component banner = statusMessage;
-        if (banner.getString().isEmpty() && !loaded && activeTab != Tab.APPEARANCE) {
+        if (banner.getString().isEmpty() && !loaded && activeTab != Tab.APPEARANCE && activeTab != Tab.BUTTONS) {
             banner = Component.translatable("quickstackcraft.config.loading");
-        } else if (banner.getString().isEmpty() && loaded && !canEdit && activeTab != Tab.APPEARANCE) {
+        } else if (banner.getString().isEmpty() && loaded && !canEdit && activeTab != Tab.APPEARANCE && activeTab != Tab.BUTTONS) {
             banner = Component.translatable("quickstackcraft.config.view_only");
         }
         if (!banner.getString().isEmpty()) {
