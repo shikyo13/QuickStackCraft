@@ -39,7 +39,7 @@ The next update is 1.1. See the [roadmap](ROADMAP.md) for planned improvements a
 
 **Customizable Visual Feedback** - Choose the destination outline color, opacity, and duration with preset swatches, advanced hex input, and a live preview. Appearance preferences remain client-local.
 
-**Animated Tutorial** - Three replayable chapters cover Quick Stack / Restock / Dump / Locks, Craft Nearby, and Whitelist / Blacklist / Preview using real Minecraft models, items, GUI textures, and the vanilla recipe book. It opens automatically on the first inventory opening in each save or server and remains replayable from Settings.
+**Animated Tutorial** - Four chapters cover inventory actions, nearby crafting, storage filters, and controls, using Minecraft models, moving items, and familiar menus. Hover a Q, R, D, or settings button and hold your forward key (W by default) to open its lesson, or use the book in Settings. Pause, replay, or drag the timeline to revisit a step. The guide pauses singleplayer and opens automatically on the first inventory opening in each save or server.
 
 **Storage Whitelist / Blacklist Cycle** - Aim at item storage and use the Cycle Storage Block Whitelist / Blacklist key to move its block type through Default, Whitelisted, and Blacklisted states with color and text confirmation.
 

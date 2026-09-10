@@ -3,6 +3,7 @@ package net.zeronexus.quickstackcraft.client.tutorial;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.zeronexus.quickstackcraft.client.UiIcon;
+import net.zeronexus.quickstackcraft.client.ToolbarPreferences;
 
 import java.util.List;
 
@@ -32,6 +33,12 @@ public interface TutorialRenderContext {
     void renderChestGui(int x, int y, float scale, List<SlotItem> items);
 
     void renderInventoryGui(int x, int y, float scale, List<SlotItem> items);
+
+    default void renderInventoryGui(int x, int y, float scale, List<SlotItem> items, ToolbarPreferences toolbar) {
+        renderInventoryGui(x, y, scale, items);
+    }
+
+    default void renderButtonSettings(int x, int y, boolean visible, int offsetX, int offsetY) {}
 
     void renderCraftingGui(int x, int y, float scale, List<SlotItem> gridItems, ItemStack result);
 

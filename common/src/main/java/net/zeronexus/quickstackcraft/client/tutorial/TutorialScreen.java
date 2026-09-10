@@ -29,6 +29,8 @@ public final class TutorialScreen extends LayeredScreen {
     private UiIconButton nextButton;
     private UiIconButton playPauseButton;
     private boolean markedShown;
+    private TutorialSeekBar seekBar;
+    private Boolean lastPaused;
 
     private TutorialScreen(Screen parent, int initialScene, boolean firstRun) {
         super(Component.translatable("quickstackcraft.tutorial.title"));
@@ -38,8 +40,10 @@ public final class TutorialScreen extends LayeredScreen {
                 scenes.stream().mapToDouble(TutorialScene::durationSeconds).toArray(), initialScene);
     }
 
-    public static void open(Screen parent) {
-        Minecraft.getInstance().setScreen(new TutorialScreen(parent, 0, false));
+    public static void open(Screen parent) { open(parent, 0); }
+
+    public static void open(Screen parent, int chapter) {
+        Minecraft.getInstance().setScreen(new TutorialScreen(parent, chapter, false));
     }
 
     static void openFirstRun(Screen parent) {
@@ -54,6 +58,7 @@ public final class TutorialScreen extends LayeredScreen {
         }
 
         chapterButtons.clear();
+        lastPaused = null;
         Layout layout = layout();
         int gap = 2;
         int chapterWidth = Math.max(34, (layout.contentWidth() - gap * (scenes.size() - 1)) / scenes.size());
@@ -70,6 +75,9 @@ public final class TutorialScreen extends LayeredScreen {
             addRenderableWidget(button);
             x += chapterWidth + gap;
         }
+
+        seekBar = addRenderableWidget(new TutorialSeekBar(layout.contentLeft(), layout.progressY(),
+                layout.contentWidth(), playback, 0xFFFFD34E));
 
         int controlsY = layout.controlsY();
         int size = 22;
@@ -125,18 +133,21 @@ public final class TutorialScreen extends LayeredScreen {
         graphics.drawWordWrap(font, scene.caption(playback.elapsedSeconds()),
                 layout.contentLeft(), layout.captionY(), layout.contentWidth(), 0xFFE8E8E8);
 
-        int progressWidth = layout.contentWidth();
-        graphics.fill(layout.contentLeft(), layout.progressY(),
-                layout.contentLeft() + progressWidth, layout.progressY() + 3, 0xFF34383C);
-        graphics.fill(layout.contentLeft(), layout.progressY(),
-                layout.contentLeft() + (int) Math.round(progressWidth * playback.progress()),
-                layout.progressY() + 3, 0xFFFFD34E);
+        if (layout.contentWidth() >= 280) {
+            graphics.drawCenteredString(font, Component.translatable("quickstackcraft.tutorial.time",
+                    (int) playback.elapsedSeconds(), (int) playback.duration()),
+                    (layout.contentLeft() + 100 + layout.panelRight() - 90) / 2,
+                    layout.controlsY() + 7, 0xFFB5C0C4);
+        }
 
         renderWidgets(graphics, mouseX, mouseY, delta);
     }
 
     private void updateControls() {
-        if (playPauseButton != null) {
+        if (playPauseButton != null && (lastPaused == null || lastPaused != playback.paused())) {
+            lastPaused = playback.paused();
+            playPauseButton.setMessage(Component.translatable(playback.paused()
+                    ? "quickstackcraft.tutorial.play" : "quickstackcraft.tutorial.pause"));
             playPauseButton.setIcon(playback.paused() ? UiIcon.PLAY : UiIcon.PAUSE);
             playPauseButton.setTooltip(Tooltip.create(Component.translatable(playback.paused()
                     ? "quickstackcraft.tutorial.play"
@@ -163,6 +174,10 @@ public final class TutorialScreen extends LayeredScreen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (getFocused() == seekBar && (keyCode == GLFW.GLFW_KEY_LEFT || keyCode == GLFW.GLFW_KEY_RIGHT
+                || keyCode == GLFW.GLFW_KEY_HOME || keyCode == GLFW.GLFW_KEY_END)) {
+            return seekBar.keyPressed(keyCode, scanCode, modifiers);
+        }
         if (keyCode == GLFW.GLFW_KEY_SPACE) {
             playback.togglePaused();
             return true;
@@ -184,7 +199,7 @@ public final class TutorialScreen extends LayeredScreen {
 
     @Override
     public boolean isPauseScreen() {
-        return false;
+        return true;
     }
 
     @Override
@@ -194,7 +209,7 @@ public final class TutorialScreen extends LayeredScreen {
 
     private Layout layout() {
         int panelWidth = Math.min(MAX_PANEL_WIDTH, Math.max(200, width - 12));
-        int panelHeight = Math.min(MAX_PANEL_HEIGHT, Math.max(230, height - 8));
+        int panelHeight = Math.max(180, Math.min(MAX_PANEL_HEIGHT, height - 8));
         int panelLeft = (width - panelWidth) / 2;
         int panelTop = Math.max(4, (height - panelHeight) / 2);
         int contentLeft = panelLeft + 12;
@@ -205,9 +220,9 @@ public final class TutorialScreen extends LayeredScreen {
         int chapterY = noteY + noteHeight + 3;
         int viewportY = chapterY + 24;
         int controlsY = panelTop + panelHeight - 26;
-        int progressY = controlsY - 8;
+        int progressY = controlsY - 16;
         int captionY = progressY - 38;
-        int viewportHeight = Math.max(72, captionY - viewportY - 6);
+        int viewportHeight = Math.max(16, captionY - viewportY - 6);
         return new Layout(panelLeft, panelTop, panelWidth, panelHeight,
                 contentLeft, contentWidth, noteY, chapterY,
                 new TutorialRenderContext.Bounds(contentLeft, viewportY, contentWidth, viewportHeight),

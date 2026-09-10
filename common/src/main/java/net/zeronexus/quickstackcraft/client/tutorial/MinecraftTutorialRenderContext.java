@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.zeronexus.quickstackcraft.client.InventoryToolbarLayout;
 import net.zeronexus.quickstackcraft.client.UiIcon;
+import net.zeronexus.quickstackcraft.client.ToolbarPreferences;
 import net.zeronexus.quickstackcraft.client.UiIconButton;
 
 import java.util.List;
@@ -178,6 +179,11 @@ final class MinecraftTutorialRenderContext implements TutorialRenderContext {
 
     @Override
     public void renderInventoryGui(int x, int y, float scale, List<SlotItem> items) {
+        renderInventoryGui(x, y, scale, items, ToolbarPreferences.DEFAULT);
+    }
+
+    @Override
+    public void renderInventoryGui(int x, int y, float scale, List<SlotItem> items, ToolbarPreferences toolbar) {
         renderGuiTexture(INVENTORY_GUI, x, y, scale, 176, 166);
         withGuiScale(x, y, scale, () -> {
             graphics.drawString(minecraft.font, Component.translatable("container.crafting"),
@@ -196,8 +202,45 @@ final class MinecraftTutorialRenderContext implements TutorialRenderContext {
                 }
                 renderSlotItem(item, slotX, slotY);
             }
-            renderInventoryToolbarLocal(null, false);
+            if (toolbar.visible()) {
+                graphics.pose().pushPose();
+                graphics.pose().translate(toolbar.offsetX(), toolbar.offsetY(), 0);
+                renderInventoryToolbarLocal(null, false);
+                graphics.pose().popPose();
+            }
         });
+    }
+
+    @Override
+    public void renderButtonSettings(int x, int y, boolean visible, int offsetX, int offsetY) {
+        withGuiScale(x, y, 0.75F, () -> {
+            graphics.fill(0, 0, 228, 168, 0xF0111315);
+            graphics.renderOutline(0, 0, 228, 168, 0xFF7A7A7A);
+            graphics.drawCenteredString(minecraft.font,
+                    Component.translatable("quickstackcraft.config.section.buttons"), 114, 8, 0xFFFFFFFF);
+            demoButton(8, 25, 104, "quickstackcraft.config.inventory_buttons", false);
+            demoButton(114, 25, 106, "quickstackcraft.config.storage_buttons", true);
+            demoButton(8, 49, 212, visible ? "quickstackcraft.config.buttons_shown"
+                    : "quickstackcraft.config.buttons_hidden", true);
+            graphics.drawString(minecraft.font, Component.translatable("quickstackcraft.config.button_offset_x"),
+                    8, 82, 0xFFE4E4E4, false);
+            graphics.drawString(minecraft.font, Component.translatable("quickstackcraft.config.button_offset_y"),
+                    8, 107, 0xFFE4E4E4, false);
+            for (int row = 0; row < 2; row++) {
+                int top = 76 + row * 25;
+                graphics.fill(161, top, 220, top + 20, 0xFF000000);
+                graphics.renderOutline(161, top, 59, 20, 0xFFA0A0A0);
+                graphics.drawString(minecraft.font, Integer.toString(row == 0 ? offsetX : offsetY),
+                        165, top + 6, 0xFFE4E4E4, false);
+            }
+            demoButton(8, 132, 212, "quickstackcraft.config.reset_button_position", true);
+        });
+    }
+
+    private void demoButton(int x, int y, int width, String key, boolean active) {
+        Button button = Button.builder(Component.translatable(key), ignored -> {}).bounds(x, y, width, 20).build();
+        button.active = active;
+        button.render(graphics, -1000, -1000, 0);
     }
 
     @Override
