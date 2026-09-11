@@ -13,7 +13,7 @@ QuickStack & Craft is available for **Minecraft 1.21.1 and 1.21.4** on **Fabric 
 
 ## Development
 
-The next update is 1.1. See the [roadmap](ROADMAP.md) for planned improvements and the two open community requests.
+See the [roadmap](ROADMAP.md) for version coverage and community requests.
 
 ## Features
 
@@ -58,8 +58,8 @@ The next update is 1.1. See the [roadmap](ROADMAP.md) for planned improvements a
 | Minecraft | Fabric | Forge | NeoForge |
 | --- | --- | --- | --- |
 | 1.20.1 | 1.1.0 | 1.1.0 | — |
-| 1.21.1 | Released | — | Released |
-| 1.21.4 | Released | — | Released |
+| 1.21.1 | 1.1.0 | — | 1.1.0 |
+| 1.21.4 | 1.1.0 | — | 1.1.0 |
 
 Forge 1.21.1 is not supported because Architectury API does not publish a Forge build for that version.
 
