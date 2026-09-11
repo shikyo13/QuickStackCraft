@@ -7,13 +7,14 @@
 
 Terraria-style inventory management for Minecraft. Quick Stack matching items into nearby storage, restock partial inventory stacks, dump unlocked items, protect important slots, and craft with ingredients stored around you.
 
-QuickStack & Craft 1.1 supports **Minecraft 1.21.1 and 1.21.4** on **Fabric and NeoForge** through [Architectury API](https://modrinth.com/mod/architectury-api).
+Available for **Minecraft 1.20.1 on Fabric and Forge**, and **1.21.1 / 1.21.4 on Fabric and NeoForge**. All builds require [Architectury API](https://modrinth.com/mod/architectury-api).
+
 
 [Watch the QuickStack & Craft 1.0 showcase](https://www.youtube.com/watch?v=l_6XsxF90Pw)
 
 ## Development
 
-The next update is 1.1. See the [roadmap](ROADMAP.md) for planned improvements and the two open community requests.
+See the [roadmap](ROADMAP.md) for version coverage and community requests.
 
 ## Features
 
@@ -55,10 +56,15 @@ The next update is 1.1. See the [roadmap](ROADMAP.md) for planned improvements a
 
 ## Supported Versions
 
-| Minecraft | Fabric | NeoForge |
-|-|-|-|
-| 1.21.1 | Yes | Yes |
-| 1.21.4 | Yes | Yes |
+| Minecraft | Fabric | Forge | NeoForge |
+| --- | --- | --- | --- |
+| 1.20.1 | 1.1.0 | 1.1.0 | — |
+| 1.21.1 | 1.0.1 | — | 1.0.1 |
+| 1.21.4 | 1.0.1 | — | 1.0.1 |
+
+[Download the 1.20.1 release](https://github.com/shikyo13/QuickStackCraft/releases/tag/1.1.0%2B1.20.1). Its source is on [mc/1.20.1](https://github.com/shikyo13/QuickStackCraft/tree/mc/1.20.1). Forge 1.21.1 is excluded because Architectury API has no matching Forge release.
+
+See the [roadmap](ROADMAP.md) for the next 1.21 update and community requests.
 
 ## Installation
 
