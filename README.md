@@ -59,12 +59,12 @@ See the [roadmap](ROADMAP.md) for version coverage and community requests.
 | Minecraft | Fabric | Forge | NeoForge |
 | --- | --- | --- | --- |
 | 1.20.1 | 1.1.0 | 1.1.0 | — |
-| 1.21.1 | 1.0.1 | — | 1.0.1 |
-| 1.21.4 | 1.0.1 | — | 1.0.1 |
+| 1.21.1 | 1.1.0 | — | 1.1.0 |
+| 1.21.4 | 1.1.0 | — | 1.1.0 |
 
 [Download the 1.20.1 release](https://github.com/shikyo13/QuickStackCraft/releases/tag/1.1.0%2B1.20.1). Its source is on [mc/1.20.1](https://github.com/shikyo13/QuickStackCraft/tree/mc/1.20.1). Forge 1.21.1 is excluded because Architectury API has no matching Forge release.
 
-See the [roadmap](ROADMAP.md) for the next 1.21 update and community requests.
+See the [roadmap](ROADMAP.md) for community requests and future improvements.
 
 ## Installation
 
@@ -74,7 +74,7 @@ Install on the server and participating clients for full functionality. Item mov
 - [Architectury API](https://modrinth.com/mod/architectury-api) (required)
 - [Fabric API](https://modrinth.com/mod/fabric-api) (Fabric only)
 - [JEI](https://modrinth.com/mod/jei) (optional - recipe viewer crafting and whitelist/blacklist drag-and-drop)
-- [EMI](https://modrinth.com/mod/emi) (optional on Minecraft 1.21.1 - recipe viewer crafting and whitelist/blacklist drag-and-drop)
+- [EMI](https://modrinth.com/mod/emi) (optional on Minecraft 1.20.1 and 1.21.1 - recipe viewer crafting and whitelist/blacklist drag-and-drop)
 - [ItemLocks](https://www.curseforge.com/minecraft/mc-mods/itemlocks) (optional - external slot-lock compatibility)
 - [Sophisticated Backpacks](https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks) (optional - direct open-backpack transfers)
 - [Mod Menu](https://modrinth.com/mod/modmenu) (optional on Fabric - opens the built-in settings screen from the mod list)

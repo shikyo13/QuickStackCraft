@@ -3,12 +3,12 @@
 ## Version coverage
 
 - Minecraft 1.20.1: Fabric and Forge, released as 1.1.0.
-- Minecraft 1.21.1 and 1.21.4: Fabric and NeoForge, currently released as 1.0.1.
+- Minecraft 1.21.1 and 1.21.4: Fabric and NeoForge, released as 1.1.0.
 - Forge 1.21.1 has no matching Architectury API release. NeoForge 1.20.1 is outside the maintained loader combinations.
 
-## Next update for 1.21.1 and 1.21.4
+## Added in 1.1
 
-The 1.1 development branches add restocking, adjustable or hidden toolbars, a shortcut for the hovered stack, safer transfers from open storage, and expanded animated lessons. These features are included in the 1.20.1 release. Complete the remaining gameplay coverage before publishing the 1.21 builds.
+Version 1.1 adds restocking, adjustable or hidden toolbars, a shortcut for the hovered stack, safer transfers from open storage, and expanded animated lessons. These features are included across all supported versions.
 
 [#6: QOL improvements](https://github.com/shikyo13/QuickStackCraft/issues/6) requested toolbar positioning and hovered-stack transfers. Both are implemented in 1.1. Keybinds remain available when the buttons are hidden.
 

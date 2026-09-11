@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0 (unreleased)
+## 1.1.0
 
 - Added hover-and-hold access to the animated guide, using the player's forward key.
 - Added a Controls chapter demonstrating the hovered-stack shortcut and button placement, visibility, and reset settings.
