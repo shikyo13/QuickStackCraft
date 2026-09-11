@@ -1,28 +1,24 @@
 # Roadmap
 
-## Next update: 1.1
+## Version coverage
 
-Target: Minecraft 1.21.1 and 1.21.4, on Fabric and NeoForge.
+- Minecraft 1.20.1: Fabric and Forge, released as 1.1.0.
+- Minecraft 1.21.1 and 1.21.4: Fabric and NeoForge, released as 1.1.0.
+- Forge 1.21.1 has no matching Architectury API release. NeoForge 1.20.1 is outside the maintained loader combinations.
 
-The features below are implemented in the 1.1 development branches. Both versions build for both loaders. Minecraft 1.21.1 NeoForge gameplay covers transfers, restocking, locks, nearby crafting through EMI, button preferences, and the animated guide. See [gameplay notes](docs/tutorial-qa.md) for the tested environment and remaining coverage.
+## Added in 1.1
 
-- **Restock partial stacks.** Fill existing unlocked stacks from nearby storage without occupying empty slots. Show which containers supplied the items.
-- **Safer transfers from open storage.** Keep the open container out of the destination list and ignore requests for a screen that has already closed.
-- **Choose where buttons appear.** Hide inventory and storage buttons independently, or move either toolbar by an exact horizontal and vertical pixel offset. Keep keybinds available when buttons are hidden. Requested in [#6: QOL improvements](https://github.com/shikyo13/QuickStackCraft/issues/6).
-- **Quick Stack the hovered stack.** Add an optional keybind that moves only the player-inventory stack under the cursor, including the hotbar. Respect native and ItemLocks protection, keep the cursor stack untouched, and report when no matching destination has room. Requested in [#6](https://github.com/shikyo13/QuickStackCraft/issues/6).
-- **Clear feedback and readable controls.** Keep button positions attached to the inventory when the recipe book opens, make settings usable at small GUI sizes, and explain unchanged transfers without implying they succeeded.
-- **Animated help beside the controls.** Open a relevant lesson by hovering a toolbar button and holding the forward key. Add a Controls chapter for the new shortcuts and button preferences, with a timeline that can be paused, replayed, or scrubbed.
+Version 1.1 adds restocking, adjustable or hidden toolbars, a shortcut for the hovered stack, safer transfers from open storage, and expanded animated lessons. These features are included across all supported versions.
 
-Before release, complete the gameplay coverage noted below, with particular attention to multiplayer and optional storage integrations. Keep transfer counts, item components, and locked slots intact on every supported loader.
+[#6: QOL improvements](https://github.com/shikyo13/QuickStackCraft/issues/6) requested toolbar positioning and hovered-stack transfers. Both are implemented in 1.1. Keybinds remain available when the buttons are hidden.
 
 ## Item-transfer animation
 
-[#5: Private Build request](https://github.com/shikyo13/QuickStackCraft/issues/5) proposes Terraria-style flying items between the player and the containers that received them. A contribution to the official mod is welcome, as confirmed in the issue reply.
+[#5: Private Build request](https://github.com/shikyo13/QuickStackCraft/issues/5) proposes flying items between players and destination containers. Contributions to the official project are welcome.
 
-- Drive the animation from completed transfers, showing the actual item and destination.
-- Render cosmetic items on clients, without creating collectible items or changing storage contents.
-- Provide an off switch and bound the number of animated items during large transfers.
-- Keep outlines and text feedback available when animation is disabled.
-- Support multiplayer and both loaders; verify that animation has no effect on transfer counts or completion.
+- Animate the actual items and destinations after a completed transfer.
+- Keep the animation cosmetic, with no collectible entities or changes to item counts.
+- Provide an off switch and limit simultaneous animations.
+- Retain outlines and text feedback when animation is disabled.
 
-Status: planned. Contributions can be coordinated in the linked issue.
+Status: planned.
