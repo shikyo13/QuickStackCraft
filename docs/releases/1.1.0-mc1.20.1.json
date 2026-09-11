@@ -7,14 +7,19 @@
       "filename": "quickstackcraft-fabric-1.1.0+1.20.1.jar",
       "sha256": "dde3f86814f103ca21872926d372c88135130fbba8e31e46ef054fda47b29738",
       "modrinth_version": "9EQ3KAcI",
-      "curseforge_file": null
+      "curseforge_file": 8859883,
+      "curseforge_status": "processing",
+      "modrinth_status": "listed"
     },
     {
       "loader": "forge",
       "filename": "quickstackcraft-forge-1.1.0+1.20.1.jar",
       "sha256": "d9c0cf099c939ca9e9a1496aed74839593de17ef0a8eba71124b9f7d97f10686",
       "modrinth_version": "y3oksgsT",
-      "curseforge_file": 8859868
+      "curseforge_file": 8859868,
+      "curseforge_status": "processing",
+      "modrinth_status": "listed"
     }
-  ]
+  ],
+  "github_tag": "1.1.0+1.20.1"
 }
