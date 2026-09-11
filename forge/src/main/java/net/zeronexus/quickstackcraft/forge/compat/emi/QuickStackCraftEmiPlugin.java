@@ -1,4 +1,4 @@
-package net.zeronexus.quickstackcraft.neoforge.compat.emi;
+package net.zeronexus.quickstackcraft.forge.compat.emi;
 
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;

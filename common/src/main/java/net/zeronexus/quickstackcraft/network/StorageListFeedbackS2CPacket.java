@@ -2,21 +2,19 @@ package net.zeronexus.quickstackcraft.network;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.zeronexus.quickstackcraft.logic.StorageListState;
 
 public record StorageListFeedbackS2CPacket(
         BlockPos blockPos,
         ResourceLocation blockId,
-        StorageListState state) implements CustomPacketPayload {
+        StorageListState state) implements PacketPayload {
 
-    public static final CustomPacketPayload.Type<StorageListFeedbackS2CPacket> TYPE =
-            new CustomPacketPayload.Type<>(ModNetworking.id("storage_list_feedback"));
+    public static final PacketPayload.Type<StorageListFeedbackS2CPacket> TYPE =
+            new PacketPayload.Type<>(ModNetworking.id("storage_list_feedback"));
 
-    public static final StreamCodec<FriendlyByteBuf, StorageListFeedbackS2CPacket> CODEC =
-            StreamCodec.of(StorageListFeedbackS2CPacket::encode, StorageListFeedbackS2CPacket::decode);
+    public static final PacketCodec<FriendlyByteBuf, StorageListFeedbackS2CPacket> CODEC =
+            PacketCodec.of(StorageListFeedbackS2CPacket::encode, StorageListFeedbackS2CPacket::decode);
 
     private static void encode(FriendlyByteBuf buffer, StorageListFeedbackS2CPacket packet) {
         buffer.writeBlockPos(packet.blockPos);

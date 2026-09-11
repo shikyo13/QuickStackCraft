@@ -1,8 +1,6 @@
 package net.zeronexus.quickstackcraft.network;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.zeronexus.quickstackcraft.config.QuickStackSettings;
 
@@ -13,13 +11,13 @@ public record ConfigSaveC2SPacket(
         Set<ResourceLocation> includedTargets,
         Set<ResourceLocation> excludedTargets,
         long requestId,
-        long baseRevision) implements CustomPacketPayload {
+        long baseRevision) implements PacketPayload {
 
-    public static final CustomPacketPayload.Type<ConfigSaveC2SPacket> TYPE =
-            new CustomPacketPayload.Type<>(ModNetworking.id("config_save"));
+    public static final PacketPayload.Type<ConfigSaveC2SPacket> TYPE =
+            new PacketPayload.Type<>(ModNetworking.id("config_save"));
 
-    public static final StreamCodec<FriendlyByteBuf, ConfigSaveC2SPacket> CODEC =
-            StreamCodec.of(ConfigSaveC2SPacket::encode, ConfigSaveC2SPacket::decode);
+    public static final PacketCodec<FriendlyByteBuf, ConfigSaveC2SPacket> CODEC =
+            PacketCodec.of(ConfigSaveC2SPacket::encode, ConfigSaveC2SPacket::decode);
 
     private static void encode(FriendlyByteBuf buffer, ConfigSaveC2SPacket packet) {
         ConfigPacketCodecs.writeSnapshot(buffer, packet.settings);

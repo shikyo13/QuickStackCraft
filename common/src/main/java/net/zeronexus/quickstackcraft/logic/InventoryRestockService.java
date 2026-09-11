@@ -40,7 +40,7 @@ public final class InventoryRestockService {
                 continue;
             }
 
-            int stackLimit = Math.min(target.getMaxStackSize(), inventory.getMaxStackSize(target));
+            int stackLimit = Math.min(target.getMaxStackSize(), inventory.getMaxStackSize());
             int needed = stackLimit - target.getCount();
             if (needed <= 0) {
                 continue;

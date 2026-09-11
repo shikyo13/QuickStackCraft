@@ -1,8 +1,6 @@
 package net.zeronexus.quickstackcraft.network;
 
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.zeronexus.quickstackcraft.compat.SlotMask;
 
@@ -10,22 +8,22 @@ import net.zeronexus.quickstackcraft.compat.SlotMask;
  * Client -> Server: request server-validated craft-grid placement for a recipe.
  */
 public record RecipeTransferC2SPacket(int containerId, ResourceLocation recipeId, boolean maxTransfer,
-                                      long lockedMask) implements CustomPacketPayload {
+                                      long lockedMask) implements PacketPayload {
 
-    public static final CustomPacketPayload.Type<RecipeTransferC2SPacket> TYPE =
-            new CustomPacketPayload.Type<>(ModNetworking.id("recipe_transfer"));
+    public static final PacketPayload.Type<RecipeTransferC2SPacket> TYPE =
+            new PacketPayload.Type<>(ModNetworking.id("recipe_transfer"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, RecipeTransferC2SPacket> CODEC =
-            StreamCodec.of(RecipeTransferC2SPacket::encode, RecipeTransferC2SPacket::decode);
+    public static final PacketCodec<FriendlyByteBuf, RecipeTransferC2SPacket> CODEC =
+            PacketCodec.of(RecipeTransferC2SPacket::encode, RecipeTransferC2SPacket::decode);
 
-    private static void encode(RegistryFriendlyByteBuf buffer, RecipeTransferC2SPacket packet) {
+    private static void encode(FriendlyByteBuf buffer, RecipeTransferC2SPacket packet) {
         buffer.writeVarInt(packet.containerId);
         buffer.writeResourceLocation(packet.recipeId);
         buffer.writeBoolean(packet.maxTransfer);
         buffer.writeLong(packet.lockedMask);
     }
 
-    private static RecipeTransferC2SPacket decode(RegistryFriendlyByteBuf buffer) {
+    private static RecipeTransferC2SPacket decode(FriendlyByteBuf buffer) {
         return new RecipeTransferC2SPacket(
                 buffer.readVarInt(), buffer.readResourceLocation(),
                 buffer.readBoolean(), buffer.readLong());

@@ -1,17 +1,15 @@
 package net.zeronexus.quickstackcraft.network;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.zeronexus.quickstackcraft.compat.SlotMask;
 
 public record QuickStackSlotC2SPacket(int containerId, int stateId, int inventorySlot,
-                                     long externalProtection) implements CustomPacketPayload {
+                                     long externalProtection) implements PacketPayload {
 
     public static final Type<QuickStackSlotC2SPacket> TYPE =
             new Type<>(ModNetworking.id("quick_stack_slot"));
 
-    public static final StreamCodec<FriendlyByteBuf, QuickStackSlotC2SPacket> CODEC = StreamCodec.of(
+    public static final PacketCodec<FriendlyByteBuf, QuickStackSlotC2SPacket> CODEC = PacketCodec.of(
             (buffer, value) -> {
                 buffer.writeVarInt(value.containerId());
                 buffer.writeVarInt(value.stateId());

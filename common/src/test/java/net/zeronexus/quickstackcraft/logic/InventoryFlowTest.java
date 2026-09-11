@@ -2,7 +2,6 @@ package net.zeronexus.quickstackcraft.logic;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.SimpleContainer;
@@ -30,7 +29,7 @@ class InventoryFlowTest {
     void hoveredStackMovesOnlyWhatFitsAndPreservesItsComponents() {
         Inventory inventory = new Inventory(null);
         ItemStack named = new ItemStack(Items.DIAMOND, 10);
-        named.set(DataComponents.CUSTOM_NAME, Component.literal("Keep this name"));
+        named.setHoverName(Component.literal("Keep this name"));
         inventory.setItem(9, named);
         inventory.setItem(10, new ItemStack(Items.DIAMOND, 17));
         SimpleContainer chest = new SimpleContainer(named.copyWithCount(60));
@@ -43,7 +42,7 @@ class InventoryFlowTest {
         assertEquals(64, chest.getItem(0).getCount());
         assertEquals(6, inventory.getItem(9).getCount());
         assertEquals(17, inventory.getItem(10).getCount());
-        assertTrue(ItemStack.isSameItemSameComponents(inventory.getItem(9), chest.getItem(0)));
+        assertTrue(ItemStack.isSameItemSameTags(inventory.getItem(9), chest.getItem(0)));
         assertEquals(70, inventory.getItem(9).getCount() + chest.getItem(0).getCount());
     }
 
@@ -94,7 +93,7 @@ class InventoryFlowTest {
     void differentComponentsAreNotMatchingStorage() {
         Inventory inventory = new Inventory(null);
         ItemStack named = new ItemStack(Items.DIAMOND, 7);
-        named.set(DataComponents.CUSTOM_NAME, Component.literal("Named"));
+        named.setHoverName(Component.literal("Named"));
         inventory.setItem(9, named);
         SimpleContainer chest = new SimpleContainer(new ItemStack(Items.DIAMOND, 1));
         assertEquals(TransferResult.EMPTY, InventoryTransferService.moveInventory(inventory, destinations(chest),

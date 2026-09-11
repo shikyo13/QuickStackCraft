@@ -1,6 +1,7 @@
 package net.zeronexus.quickstackcraft.compat.jei;
 
-import dev.architectury.networking.NetworkManager;
+import net.zeronexus.quickstackcraft.network.ModNetworking;
+
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.RecipeType;
@@ -10,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.Recipe;
 import net.zeronexus.quickstackcraft.compat.ExternalSlotLocks;
 import net.zeronexus.quickstackcraft.network.RecipeTransferC2SPacket;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +25,7 @@ import java.util.Optional;
  * Replaces JEI's built-in CraftingRecipeTransferHandler so the [+] button
  * checks nearby containers for ingredient availability.
  */
-public class CraftFromNearbyCraftingTransferHandler implements IRecipeTransferHandler<CraftingMenu, RecipeHolder<CraftingRecipe>> {
+public class CraftFromNearbyCraftingTransferHandler implements IRecipeTransferHandler<CraftingMenu, CraftingRecipe> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("QuickStackCraft-JEI");
 
@@ -39,13 +40,13 @@ public class CraftFromNearbyCraftingTransferHandler implements IRecipeTransferHa
     }
 
     @Override
-    public RecipeType<RecipeHolder<CraftingRecipe>> getRecipeType() {
+    public RecipeType<CraftingRecipe> getRecipeType() {
         return RecipeTypes.CRAFTING;
     }
 
     @Override
     public @Nullable IRecipeTransferError transferRecipe(
-            CraftingMenu menu, RecipeHolder<CraftingRecipe> recipe,
+            CraftingMenu menu, CraftingRecipe recipe,
             IRecipeSlotsView recipeSlots, Player player,
             boolean maxTransfer, boolean doTransfer) {
 
@@ -55,9 +56,9 @@ public class CraftFromNearbyCraftingTransferHandler implements IRecipeTransferHa
             return JeiTransferSupport.availabilityStatus(ingredients, player);
         }
 
-        LOGGER.info("[QuickStackCraft] Craft from nearby: recipe={}", recipe.id());
-        NetworkManager.sendToServer(new RecipeTransferC2SPacket(
-                menu.containerId, recipe.id(), maxTransfer,
+        LOGGER.info("[QuickStackCraft] Craft from nearby: recipe={}", recipe.getId());
+        ModNetworking.sendToServer(new RecipeTransferC2SPacket(
+                menu.containerId, recipe.getId(), maxTransfer,
                 ExternalSlotLocks.snapshot()));
         return null;
     }

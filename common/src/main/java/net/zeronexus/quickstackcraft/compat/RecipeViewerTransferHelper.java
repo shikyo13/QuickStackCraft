@@ -1,6 +1,7 @@
 package net.zeronexus.quickstackcraft.compat;
 
-import dev.architectury.networking.NetworkManager;
+import net.zeronexus.quickstackcraft.network.ModNetworking;
+
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingMenu;
@@ -24,7 +25,7 @@ public final class RecipeViewerTransferHelper {
         long tick = player.level().getGameTime();
         if (NearbyItemsCache.needsRefresh(tick)) {
             NearbyItemsCache.markQueried(tick);
-            NetworkManager.sendToServer(new NearbyItemsScanC2SPacket());
+            ModNetworking.sendToServer(new NearbyItemsScanC2SPacket());
         }
     }
 
@@ -42,7 +43,7 @@ public final class RecipeViewerTransferHelper {
             for (int groupIndex = 0; groupIndex < groups.size(); groupIndex++) {
                 ItemStack available = groups.get(groupIndex).stack();
                 if (slotChoices.stream().anyMatch(choice -> !choice.isEmpty()
-                        && ItemStack.isSameItemSameComponents(available, choice))) {
+                        && ItemStack.isSameItemSameTags(available, choice))) {
                     matchingGroups.add(groupIndex);
                 }
             }
@@ -93,7 +94,7 @@ public final class RecipeViewerTransferHelper {
         }
         for (int i = 0; i < available.size(); i++) {
             StackGroup group = available.get(i);
-            if (ItemStack.isSameItemSameComponents(group.stack(), stack)) {
+            if (ItemStack.isSameItemSameTags(group.stack(), stack)) {
                 available.set(i, new StackGroup(group.stack(), saturatedAdd(group.count(), stack.getCount())));
                 return;
             }

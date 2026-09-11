@@ -2,7 +2,6 @@ package net.zeronexus.quickstackcraft.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
@@ -20,15 +19,13 @@ public abstract class LevelRendererMixin {
 
     @Inject(method = "renderLevel", at = @At("RETURN"))
     private void quickstackcraft$renderContainerHighlights(
-            DeltaTracker deltaTracker, boolean renderBlockOutline,
+            PoseStack poseStack, float partialTick, long finishTimeNano, boolean renderBlockOutline,
             Camera camera, GameRenderer gameRenderer, LightTexture lightTexture,
-            Matrix4f modelView, Matrix4f projection, CallbackInfo ci) {
+            Matrix4f projection, CallbackInfo ci) {
 
         if (!ContainerHighlightRenderer.hasHighlights()) return;
 
         Vec3 cameraPos = camera.getPosition();
-        PoseStack poseStack = new PoseStack();
-        poseStack.mulPose(modelView);
 
         MultiBufferSource.BufferSource bufferSource =
                 net.minecraft.client.Minecraft.getInstance().renderBuffers().bufferSource();

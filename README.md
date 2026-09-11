@@ -7,7 +7,7 @@
 
 Terraria-style inventory management for Minecraft. Quick Stack matching items into nearby storage, restock partial inventory stacks, dump unlocked items, protect important slots, and craft with ingredients stored around you.
 
-QuickStack & Craft 1.1 supports **Minecraft 1.21.1 and 1.21.4** on **Fabric and NeoForge** through [Architectury API](https://modrinth.com/mod/architectury-api).
+QuickStack & Craft is available for **Minecraft 1.21.1 and 1.21.4** on **Fabric and NeoForge**. This branch adds **Minecraft 1.20.1 on Fabric and Forge**; those builds are awaiting gameplay verification. All versions require [Architectury API](https://modrinth.com/mod/architectury-api).
 
 [Watch the QuickStack & Craft 1.0 showcase](https://www.youtube.com/watch?v=l_6XsxF90Pw)
 
@@ -49,16 +49,19 @@ The next update is 1.1. See the [roadmap](ROADMAP.md) for planned improvements a
 
 **Storage Feedback** - Successful destinations receive a configurable gold-by-default outline and particle trail. Restock sources use cyan. Whitelist, blacklist, and default changes use distinct colors plus action-bar text so state is never communicated by color alone.
 
-**Modded Storage Support** - Works with vanilla storage, common storage tags, Fabric Transfer API storage, NeoForge item-handler storage, and known storage namespaces such as Sophisticated Storage, Iron Chests, Storage Drawers, and Functional Storage.
+**Modded Storage Support** - Works with vanilla storage, common storage tags, Fabric Transfer API storage, Forge and NeoForge item-handler storage, and known storage namespaces such as Sophisticated Storage, Iron Chests, Storage Drawers, and Functional Storage.
 
 **Network Storage Boundary** - Applied Energistics 2 and Refined Storage use their own terminal and network workflows. QuickStack & Craft does not add dedicated adapters or automatically target their network blocks; a server operator can still explicitly whitelist a block type.
 
 ## Supported Versions
 
-| Minecraft | Fabric | NeoForge |
-|-|-|-|
-| 1.21.1 | Yes | Yes |
-| 1.21.4 | Yes | Yes |
+| Minecraft | Fabric | Forge | NeoForge |
+| --- | --- | --- | --- |
+| 1.20.1 | Built; gameplay pending | Built; gameplay pending | — |
+| 1.21.1 | Released | — | Released |
+| 1.21.4 | Released | — | Released |
+
+Forge 1.21.1 is not supported because Architectury API does not publish a Forge build for that version.
 
 ## Installation
 
@@ -68,7 +71,7 @@ Install on the server and participating clients for full functionality. Item mov
 - [Architectury API](https://modrinth.com/mod/architectury-api) (required)
 - [Fabric API](https://modrinth.com/mod/fabric-api) (Fabric only)
 - [JEI](https://modrinth.com/mod/jei) (optional - recipe viewer crafting and whitelist/blacklist drag-and-drop)
-- [EMI](https://modrinth.com/mod/emi) (optional on Minecraft 1.21.1 - recipe viewer crafting and whitelist/blacklist drag-and-drop)
+- [EMI](https://modrinth.com/mod/emi) (optional on Minecraft 1.20.1 and 1.21.1 - recipe viewer crafting and whitelist/blacklist drag-and-drop)
 - [ItemLocks](https://www.curseforge.com/minecraft/mc-mods/itemlocks) (optional - external slot-lock compatibility)
 - [Sophisticated Backpacks](https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks) (optional - direct open-backpack transfers)
 - [Mod Menu](https://modrinth.com/mod/modmenu) (optional on Fabric - opens the built-in settings screen from the mod list)
@@ -96,11 +99,11 @@ The inventory Q, R, D, and settings buttons work immediately. All seven keyboard
 ```bash
 git clone https://github.com/shikyo13/QuickStackCraft.git
 cd QuickStackCraft
-git checkout mc/1.21.1  # or mc/1.21.4
+git checkout mc/1.20.1  # or mc/1.21.1 / mc/1.21.4
 ./gradlew build
 ```
 
-Output jars are in `fabric/build/libs/` and `neoforge/build/libs/`.
+Use Java 17 for Minecraft 1.20.1 and Java 21 for 1.21.1/1.21.4. The build copies the finished, loader-labeled jars to the repository root. Minecraft 1.20.1 builds Fabric and Forge; the 1.21 branches build Fabric and NeoForge.
 
 ## Links
 

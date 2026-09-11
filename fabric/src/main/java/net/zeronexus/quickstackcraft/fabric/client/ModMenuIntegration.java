@@ -36,7 +36,7 @@ public final class ModMenuIntegration implements ModMenuApi {
 
         @Override
         public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-            renderBackground(graphics, mouseX, mouseY, delta);
+            renderBackground(graphics);
             graphics.drawCenteredString(font, title, width / 2, height / 2 - 28, 0xFFFFFFFF);
             graphics.drawCenteredString(font,
                     Component.translatable("quickstackcraft.config.join_world"),

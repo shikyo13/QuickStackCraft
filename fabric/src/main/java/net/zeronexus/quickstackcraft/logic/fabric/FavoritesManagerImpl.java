@@ -1,6 +1,5 @@
 package net.zeronexus.quickstackcraft.logic.fabric;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.IntTag;
@@ -43,7 +42,7 @@ public final class FavoritesManagerImpl {
             if (server != null) {
                 ServerLevel overworld = server.overworld();
                 return overworld.getDataStorage().computeIfAbsent(
-                        FavoritesSavedData.factory(), "quickstackcraft_favorites"
+                        FavoritesSavedData::load, FavoritesSavedData::new, "quickstackcraft_favorites"
                 );
             }
         }
@@ -54,9 +53,6 @@ public final class FavoritesManagerImpl {
         private final Map<UUID, Set<Integer>> data = new HashMap<>();
         static final FavoritesSavedData EMPTY = new FavoritesSavedData();
 
-        public static SavedData.Factory<FavoritesSavedData> factory() {
-            return new SavedData.Factory<>(FavoritesSavedData::new, FavoritesSavedData::load, null);
-        }
 
         boolean isFavorited(UUID playerId, int slot) {
             return data.getOrDefault(playerId, Set.of()).contains(slot);
@@ -82,7 +78,7 @@ public final class FavoritesManagerImpl {
         }
 
         @Override
-        public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+        public CompoundTag save(CompoundTag tag) {
             for (Map.Entry<UUID, Set<Integer>> entry : data.entrySet()) {
                 ListTag list = new ListTag();
                 for (int slot : entry.getValue()) {
@@ -93,7 +89,7 @@ public final class FavoritesManagerImpl {
             return tag;
         }
 
-        public static FavoritesSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
+        public static FavoritesSavedData load(CompoundTag tag) {
             FavoritesSavedData savedData = new FavoritesSavedData();
             for (String key : tag.getAllKeys()) {
                 UUID uuid = UUID.fromString(key);

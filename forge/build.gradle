@@ -4,13 +4,13 @@ plugins {
 
 architectury {
     platformSetupLoomIde()
-    neoForge()
+    forge()
 }
 
 loom {
     mixin {
         useLegacyMixinAp = true
-        add(sourceSets.main, "quickstackcraft-neoforge-refmap.json")
+        add(sourceSets.main, "quickstackcraft-forge-refmap.json")
     }
 }
 
@@ -21,7 +21,7 @@ configurations {
     }
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
-    developmentNeoForge.extendsFrom common
+    developmentForge.extendsFrom common
 
     shadowBundle {
         canBeResolved = true
@@ -30,23 +30,23 @@ configurations {
 }
 
 repositories {
-    maven { url = "https://maven.neoforged.net/releases/" }
+    maven { url = "https://maven.minecraftforge.net/" }
 }
 
 dependencies {
-    neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
+    forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
 
-    // Architectury API (NeoForge)
-    modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_api_version}"
+    // Architectury API (Forge)
+    modApi "dev.architectury:architectury-forge:${rootProject.architectury_api_version}"
 
     // JEI (compile-only)
-    modCompileOnlyApi "mezz.jei:jei-${rootProject.minecraft_version}-neoforge-api:${rootProject.jei_version}"
+    modCompileOnlyApi "mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}"
 
     // EMI (compile-only)
-    modCompileOnlyApi "dev.emi:emi-neoforge:${rootProject.emi_version}:api"
+    modCompileOnlyApi "dev.emi:emi-forge:${rootProject.emi_version}:api"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive = false }
-    shadowBundle project(path: ":common", configuration: "transformProductionNeoForge")
+    shadowBundle project(path: ":common", configuration: "transformProductionForge")
 }
 
 shadowJar {
@@ -63,3 +63,5 @@ sourcesJar {
     dependsOn commonSources
     from commonSources.archiveFile.map { zipTree(it) }
 }
+
+jar { manifest.attributes("MixinConfigs": "quickstackcraft-common.mixins.json,quickstackcraft.mixins.json") }

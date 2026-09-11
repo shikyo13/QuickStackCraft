@@ -1,10 +1,8 @@
 package net.zeronexus.quickstackcraft.network;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public record OpenContainerTransferC2SPacket(TransferKind kind, int containerId) implements CustomPacketPayload {
+public record OpenContainerTransferC2SPacket(TransferKind kind, int containerId) implements PacketPayload {
 
     public enum TransferKind {
         MATCHING_ITEMS,
@@ -14,8 +12,8 @@ public record OpenContainerTransferC2SPacket(TransferKind kind, int containerId)
     public static final Type<OpenContainerTransferC2SPacket> TYPE =
             new Type<>(ModNetworking.id("open_container_deposit"));
 
-    public static final StreamCodec<FriendlyByteBuf, OpenContainerTransferC2SPacket> CODEC =
-            StreamCodec.of(
+    public static final PacketCodec<FriendlyByteBuf, OpenContainerTransferC2SPacket> CODEC =
+            PacketCodec.of(
                     (buffer, value) -> {
                         buffer.writeEnum(value.kind());
                         buffer.writeVarInt(value.containerId());

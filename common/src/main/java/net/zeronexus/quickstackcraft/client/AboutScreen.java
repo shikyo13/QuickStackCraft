@@ -10,7 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.net.URI;
-import java.time.Duration;
 import java.util.List;
 
 public final class AboutScreen extends LayeredScreen {
@@ -57,13 +56,13 @@ public final class AboutScreen extends LayeredScreen {
                 .bounds(x, y, width, 20)
                 .build();
         button.setTooltip(Tooltip.create(Component.literal(url)));
-        button.setTooltipDelay(Duration.ofMillis(300));
+        button.setTooltipDelay(300);
         addRenderableWidget(button);
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        renderBackground(graphics, mouseX, mouseY, delta);
+        renderBackground(graphics);
         Bounds panel = panelBounds();
         int right = panel.x() + panel.width();
         int bottom = panel.y() + panel.height();

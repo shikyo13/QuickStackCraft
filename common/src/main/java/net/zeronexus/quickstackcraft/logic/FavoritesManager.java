@@ -7,7 +7,7 @@ import java.util.Set;
 
 /**
  * Platform-abstracted favorites manager.
- * NeoForge uses AttachmentType on the player, Fabric uses Cardinal Components.
+ * Both loaders persist player slot locks in world saved data.
  * Server is source of truth - client stores a local cache synced via packets.
  */
 public final class FavoritesManager {

@@ -55,7 +55,7 @@ public class ContainerAccess {
     public boolean containsItem(ItemStack stack) {
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack existing = container.getItem(i);
-            if (!existing.isEmpty() && ItemStack.isSameItemSameComponents(existing, stack)) {
+            if (!existing.isEmpty() && ItemStack.isSameItemSameTags(existing, stack)) {
                 return true;
             }
         }
@@ -70,7 +70,7 @@ public class ContainerAccess {
         int slot = container.getContainerSize();
         while (slot > 0) {
             ItemStack existing = container.getItem(--slot);
-            if (!existing.isEmpty() && ItemStack.isSameItemSameComponents(existing, stack)) {
+            if (!existing.isEmpty() && ItemStack.isSameItemSameTags(existing, stack)) {
                 total += existing.getCount();
             }
         }
@@ -104,7 +104,7 @@ public class ContainerAccess {
         for (int index = 0; index < container.getContainerSize() && remaining > 0; index++) {
             ItemStack available = container.getItem(index);
             if (available.isEmpty()
-                    || !ItemStack.isSameItemSameComponents(available, template)) {
+                    || !ItemStack.isSameItemSameTags(available, template)) {
                 continue;
             }
 
@@ -112,7 +112,7 @@ public class ContainerAccess {
             if (removed.isEmpty()) {
                 continue;
             }
-            if (!ItemStack.isSameItemSameComponents(removed, template)) {
+            if (!ItemStack.isSameItemSameTags(removed, template)) {
                 insertItem(removed);
                 continue;
             }
@@ -138,9 +138,9 @@ public class ContainerAccess {
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack slot = container.getItem(i);
             if (!slot.isEmpty()
-                    && ItemStack.isSameItemSameComponents(slot, toInsert)
+                    && ItemStack.isSameItemSameTags(slot, toInsert)
                     && container.canPlaceItem(i, toInsert)) {
-                int limit = Math.min(slot.getMaxStackSize(), container.getMaxStackSize(toInsert));
+                int limit = Math.min(slot.getMaxStackSize(), container.getMaxStackSize());
                 int space = limit - slot.getCount();
                 if (space > 0) {
                     int transfer = Math.min(space, toInsert.getCount());
@@ -155,7 +155,7 @@ public class ContainerAccess {
         // Second pass: fill empty slots
         for (int i = 0; i < container.getContainerSize(); i++) {
             if (container.getItem(i).isEmpty() && container.canPlaceItem(i, toInsert)) {
-                int limit = Math.min(toInsert.getMaxStackSize(), container.getMaxStackSize(toInsert));
+                int limit = Math.min(toInsert.getMaxStackSize(), container.getMaxStackSize());
                 int transfer = Math.min(limit, toInsert.getCount());
                 if (transfer <= 0) {
                     continue;

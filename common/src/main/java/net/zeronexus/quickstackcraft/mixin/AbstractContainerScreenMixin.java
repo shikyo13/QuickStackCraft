@@ -1,6 +1,7 @@
 package net.zeronexus.quickstackcraft.mixin;
 
-import dev.architectury.networking.NetworkManager;
+import net.zeronexus.quickstackcraft.network.ModNetworking;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -176,7 +177,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         for (Slot slot : this.menu.slots) {
             if (quickstackcraft$isPlayerInventorySlot(slot)
                     && this.isHovering(slot.x, slot.y, 16, 16, mouseX, mouseY)) {
-                NetworkManager.sendToServer(new FavoriteToggleC2SPacket(slot.getContainerSlot()));
+                ModNetworking.sendToServer(new FavoriteToggleC2SPacket(slot.getContainerSlot()));
                 cir.setReturnValue(true);
                 return;
             }
@@ -235,7 +236,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
             return;
         }
         AbstractContainerMenu activeMenu = this.minecraft.player.containerMenu;
-        NetworkManager.sendToServer(new QuickStackSlotC2SPacket(activeMenu.containerId, activeMenu.getStateId(),
+        ModNetworking.sendToServer(new QuickStackSlotC2SPacket(activeMenu.containerId, activeMenu.getStateId(),
                 this.hoveredSlot.getContainerSlot(), ExternalSlotLocks.snapshot()));
     }
 
@@ -249,12 +250,12 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         OpenContainerTransferC2SPacket.TransferKind kind = dumpAll
                 ? OpenContainerTransferC2SPacket.TransferKind.ALL_ITEMS
                 : OpenContainerTransferC2SPacket.TransferKind.MATCHING_ITEMS;
-        NetworkManager.sendToServer(new OpenContainerTransferC2SPacket(kind, this.menu.containerId));
+        ModNetworking.sendToServer(new OpenContainerTransferC2SPacket(kind, this.menu.containerId));
     }
 
     @Unique
     private void quickstackcraft$sendInventoryAction(InventoryActionC2SPacket.Action action) {
-        NetworkManager.sendToServer(new InventoryActionC2SPacket(action, ExternalSlotLocks.snapshot()));
+        ModNetworking.sendToServer(new InventoryActionC2SPacket(action, ExternalSlotLocks.snapshot()));
     }
 
     @Unique

@@ -23,9 +23,9 @@ public abstract class LayeredScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void renderBackground(GuiGraphics graphics) {
         if (!renderingWidgets) {
-            super.renderBackground(graphics, mouseX, mouseY, delta);
+            super.renderBackground(graphics);
         }
     }
 }

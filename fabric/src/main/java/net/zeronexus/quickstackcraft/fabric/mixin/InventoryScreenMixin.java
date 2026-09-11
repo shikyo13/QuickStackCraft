@@ -23,7 +23,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.time.Duration;
 
 @Mixin(InventoryScreen.class)
 public abstract class InventoryScreenMixin extends AbstractContainerScreen<InventoryMenu> {
@@ -42,33 +41,33 @@ public abstract class InventoryScreenMixin extends AbstractContainerScreen<Inven
 
         quickstackcraft$quickStackButton = Button.builder(
                         Component.literal(InventoryToolbarLayout.QUICK_STACK_LABEL),
-                        btn -> NetworkManager.sendToServer(new InventoryActionC2SPacket(
+                        btn -> net.zeronexus.quickstackcraft.network.ModNetworking.sendToServer(new InventoryActionC2SPacket(
                                 InventoryActionC2SPacket.Action.QUICK_STACK, ExternalSlotLocks.snapshot())))
                 .bounds(InventoryToolbarLayout.buttonX(this.leftPos, 0), btnY, btnSize, btnSize)
                 .build();
         quickstackcraft$quickStackButton.setTooltip(Tooltip.create(
                 Component.translatable("quickstackcraft.button.quick_stack").append("\n").append(TutorialHover.hint())));
-        quickstackcraft$quickStackButton.setTooltipDelay(Duration.ofMillis(250));
+        quickstackcraft$quickStackButton.setTooltipDelay(250);
 
         quickstackcraft$restockButton = Button.builder(
                         Component.literal(InventoryToolbarLayout.RESTOCK_LABEL),
-                        btn -> NetworkManager.sendToServer(new InventoryActionC2SPacket(
+                        btn -> net.zeronexus.quickstackcraft.network.ModNetworking.sendToServer(new InventoryActionC2SPacket(
                                 InventoryActionC2SPacket.Action.RESTOCK, ExternalSlotLocks.snapshot())))
                 .bounds(InventoryToolbarLayout.buttonX(this.leftPos, 1), btnY, btnSize, btnSize)
                 .build();
         quickstackcraft$restockButton.setTooltip(Tooltip.create(
                 Component.translatable("quickstackcraft.button.restock").append("\n").append(TutorialHover.hint())));
-        quickstackcraft$restockButton.setTooltipDelay(Duration.ofMillis(250));
+        quickstackcraft$restockButton.setTooltipDelay(250);
 
         quickstackcraft$dumpButton = Button.builder(
                         Component.literal(InventoryToolbarLayout.DUMP_LABEL),
-                        btn -> NetworkManager.sendToServer(new InventoryActionC2SPacket(
+                        btn -> net.zeronexus.quickstackcraft.network.ModNetworking.sendToServer(new InventoryActionC2SPacket(
                                 InventoryActionC2SPacket.Action.DUMP, ExternalSlotLocks.snapshot())))
                 .bounds(InventoryToolbarLayout.buttonX(this.leftPos, 2), btnY, btnSize, btnSize)
                 .build();
         quickstackcraft$dumpButton.setTooltip(Tooltip.create(
                 Component.translatable("quickstackcraft.button.dump_all").append("\n").append(TutorialHover.hint())));
-        quickstackcraft$dumpButton.setTooltipDelay(Duration.ofMillis(250));
+        quickstackcraft$dumpButton.setTooltipDelay(250);
 
         quickstackcraft$configButton = new UiIconButton(
                 InventoryToolbarLayout.buttonX(this.leftPos, 3), btnY, btnSize, UiIcon.SETTINGS,

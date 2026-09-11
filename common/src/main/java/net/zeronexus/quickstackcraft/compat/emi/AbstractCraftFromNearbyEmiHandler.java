@@ -1,6 +1,7 @@
 package net.zeronexus.quickstackcraft.compat.emi;
 
-import dev.architectury.networking.NetworkManager;
+import net.zeronexus.quickstackcraft.network.ModNetworking;
+
 import dev.emi.emi.api.recipe.EmiPlayerInventory;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.VanillaEmiRecipeCategories;
@@ -74,7 +75,7 @@ abstract class AbstractCraftFromNearbyEmiHandler<T extends AbstractContainerMenu
             return false;
         }
 
-        NetworkManager.sendToServer(new RecipeTransferC2SPacket(
+        ModNetworking.sendToServer(new RecipeTransferC2SPacket(
                 context.getScreenHandler().containerId,
                 id,
                 context.getAmount() > 1,

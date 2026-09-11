@@ -40,9 +40,9 @@ class QuickStackSettingsTest {
         assertEquals("12ABEF", QuickStackSettings.outlineRgb);
         assertEquals(1.0D, QuickStackSettings.outlineOpacity);
         assertEquals(100, QuickStackSettings.outlineLifetimeMs);
-        assertTrue(QuickStackSettings.configuredWhitelist.contains(ResourceLocation.fromNamespaceAndPath("minecraft", "dropper")));
-        assertTrue(QuickStackSettings.configuredWhitelist.contains(ResourceLocation.fromNamespaceAndPath("sophisticatedstorage", "controller")));
-        assertTrue(QuickStackSettings.configuredBlacklist.contains(ResourceLocation.fromNamespaceAndPath("minecraft", "furnace")));
+        assertTrue(QuickStackSettings.configuredWhitelist.contains(new ResourceLocation("minecraft", "dropper")));
+        assertTrue(QuickStackSettings.configuredWhitelist.contains(new ResourceLocation("sophisticatedstorage", "controller")));
+        assertTrue(QuickStackSettings.configuredBlacklist.contains(new ResourceLocation("minecraft", "furnace")));
     }
 
     @Test

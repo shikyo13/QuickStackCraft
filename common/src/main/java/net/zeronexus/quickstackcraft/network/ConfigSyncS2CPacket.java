@@ -1,8 +1,6 @@
 package net.zeronexus.quickstackcraft.network;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.zeronexus.quickstackcraft.config.QuickStackSettings;
 
@@ -15,7 +13,7 @@ public record ConfigSyncS2CPacket(
         boolean canEdit,
         long revision,
         long requestId,
-        SyncReason reason) implements CustomPacketPayload {
+        SyncReason reason) implements PacketPayload {
 
     public enum SyncReason {
         INITIAL,
@@ -24,11 +22,11 @@ public record ConfigSyncS2CPacket(
         REJECTED
     }
 
-    public static final CustomPacketPayload.Type<ConfigSyncS2CPacket> TYPE =
-            new CustomPacketPayload.Type<>(ModNetworking.id("config_sync"));
+    public static final PacketPayload.Type<ConfigSyncS2CPacket> TYPE =
+            new PacketPayload.Type<>(ModNetworking.id("config_sync"));
 
-    public static final StreamCodec<FriendlyByteBuf, ConfigSyncS2CPacket> CODEC =
-            StreamCodec.of(ConfigSyncS2CPacket::encode, ConfigSyncS2CPacket::decode);
+    public static final PacketCodec<FriendlyByteBuf, ConfigSyncS2CPacket> CODEC =
+            PacketCodec.of(ConfigSyncS2CPacket::encode, ConfigSyncS2CPacket::decode);
 
     private static void encode(FriendlyByteBuf buffer, ConfigSyncS2CPacket packet) {
         ConfigPacketCodecs.writeSnapshot(buffer, packet.settings);

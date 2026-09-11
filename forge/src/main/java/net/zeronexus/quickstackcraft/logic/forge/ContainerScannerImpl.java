@@ -1,23 +1,25 @@
-package net.zeronexus.quickstackcraft.logic.neoforge;
+package net.zeronexus.quickstackcraft.logic.forge;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.IItemHandler;
 import net.zeronexus.quickstackcraft.util.DirectInsertContainer;
 
 /**
- * Bridges NeoForge item-handler capabilities into the common nearby-storage path.
+ * Bridges Forge item-handler capabilities into the common nearby-storage path.
  */
 public final class ContainerScannerImpl {
 
     private ContainerScannerImpl() {}
 
     public static Container getContainerFromCapability(Level level, BlockPos pos) {
-        IItemHandler capability = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+        var blockEntity = level.getBlockEntity(pos);
+        IItemHandler capability = blockEntity == null ? null
+                : blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
         return capability == null || capability.getSlots() == 0
                 ? null
                 : new CapabilityContainerView(capability);

@@ -6,7 +6,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 
-import java.time.Duration;
 
 public final class UiIconButton extends Button {
 
@@ -16,7 +15,7 @@ public final class UiIconButton extends Button {
         super(x, y, size, size, label, onPress, DEFAULT_NARRATION);
         this.icon = icon;
         setTooltip(Tooltip.create(label));
-        setTooltipDelay(Duration.ofMillis(250));
+        setTooltipDelay(250);
     }
 
     public void setIcon(UiIcon icon) {

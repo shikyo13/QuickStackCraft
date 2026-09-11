@@ -1,4 +1,4 @@
-package net.zeronexus.quickstackcraft.neoforge.compat.jei;
+package net.zeronexus.quickstackcraft.forge.compat.jei;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -9,15 +9,15 @@ import net.zeronexus.quickstackcraft.QuickStackCraft;
 import net.zeronexus.quickstackcraft.compat.jei.JeiPluginSetup;
 
 /**
- * NeoForge-side JEI plugin entry point. Must be in the platform module
- * (not common) for NeoForge's ModFileScanData to discover @JeiPlugin.
+ * Forge-side JEI plugin entry point. Must be in the platform module
+ * (not common) for Forge's ModFileScanData to discover @JeiPlugin.
  */
 @JeiPlugin
 public class QuickStackCraftJeiPlugin implements IModPlugin {
 
     @Override
     public ResourceLocation getPluginUid() {
-        return ResourceLocation.fromNamespaceAndPath(QuickStackCraft.MOD_ID, "jei");
+        return new ResourceLocation(QuickStackCraft.MOD_ID, "jei");
     }
 
     @Override

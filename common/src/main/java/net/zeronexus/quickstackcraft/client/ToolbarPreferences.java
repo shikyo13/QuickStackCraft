@@ -8,8 +8,8 @@ public record ToolbarPreferences(boolean visible, int offsetX, int offsetY) {
     public static final ToolbarPreferences DEFAULT = new ToolbarPreferences(true, 0, 0);
 
     public ToolbarPreferences {
-        offsetX = Math.clamp(offsetX, -MAX_OFFSET, MAX_OFFSET);
-        offsetY = Math.clamp(offsetY, -MAX_OFFSET, MAX_OFFSET);
+        offsetX = net.minecraft.util.Mth.clamp(offsetX, -MAX_OFFSET, MAX_OFFSET);
+        offsetY = net.minecraft.util.Mth.clamp(offsetY, -MAX_OFFSET, MAX_OFFSET);
     }
 
     static ToolbarPreferences read(Properties values, String prefix) {

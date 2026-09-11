@@ -80,6 +80,6 @@ public final class StorageRecognitionPolicy {
     }
 
     private static TagKey<Block> blockTag(String namespace, String path) {
-        return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(namespace, path));
+        return TagKey.create(Registries.BLOCK, new ResourceLocation(namespace, path));
     }
 }

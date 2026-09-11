@@ -151,7 +151,7 @@ public final class CraftFromNearbyLogic {
         }
         for (int i = 0; i < groups.size(); i++) {
             StackGroup group = groups.get(i);
-            if (ItemStack.isSameItemSameComponents(group.stack(), stack)) {
+            if (ItemStack.isSameItemSameTags(group.stack(), stack)) {
                 groups.set(i, new StackGroup(group.stack(), saturatedAdd(group.count(), stack.getCount())));
                 return;
             }
@@ -199,7 +199,7 @@ public final class CraftFromNearbyLogic {
                 continue;
             }
             ItemStack existing = inventory.getItem(slot);
-            if (ItemStack.isSameItemSameComponents(existing, selected)) {
+            if (ItemStack.isSameItemSameTags(existing, selected)) {
                 ItemStack removed = inventory.removeItem(slot, Math.min(existing.getCount(), remaining));
                 remaining -= removed.getCount();
             }
@@ -221,7 +221,7 @@ public final class CraftFromNearbyLogic {
     private static int extractFromContainer(Container container, ItemStack selected, int remaining) {
         for (int slot = 0; slot < container.getContainerSize() && remaining > 0; slot++) {
             ItemStack existing = container.getItem(slot);
-            if (!existing.isEmpty() && ItemStack.isSameItemSameComponents(existing, selected)) {
+            if (!existing.isEmpty() && ItemStack.isSameItemSameTags(existing, selected)) {
                 ItemStack removed = container.removeItem(slot, Math.min(existing.getCount(), remaining));
                 remaining -= removed.getCount();
             }
@@ -238,7 +238,7 @@ public final class CraftFromNearbyLogic {
                 continue;
             }
             ItemStack existing = inventory.getItem(slot);
-            if (!existing.isEmpty() && ItemStack.isSameItemSameComponents(existing, remaining)) {
+            if (!existing.isEmpty() && ItemStack.isSameItemSameTags(existing, remaining)) {
                 int moved = Math.min(existing.getMaxStackSize() - existing.getCount(), remaining.getCount());
                 if (moved > 0) {
                     existing.grow(moved);
@@ -266,7 +266,7 @@ public final class CraftFromNearbyLogic {
                 continue;
             }
             ItemStack existing = inventory.get(slot);
-            if (!existing.isEmpty() && ItemStack.isSameItemSameComponents(existing, remaining)) {
+            if (!existing.isEmpty() && ItemStack.isSameItemSameTags(existing, remaining)) {
                 int moved = Math.min(existing.getMaxStackSize() - existing.getCount(), remaining.getCount());
                 if (moved > 0) {
                     existing.grow(moved);

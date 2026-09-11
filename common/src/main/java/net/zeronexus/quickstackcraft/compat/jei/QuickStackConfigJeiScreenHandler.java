@@ -28,12 +28,12 @@ public final class QuickStackConfigJeiScreenHandler
     }
 
     private record Properties(
-            Class<? extends Screen> screenClass,
-            int guiLeft,
-            int guiTop,
-            int guiXSize,
-            int guiYSize,
-            int screenWidth,
-            int screenHeight) implements IGuiProperties {
+            Class<? extends Screen> getScreenClass,
+            int getGuiLeft,
+            int getGuiTop,
+            int getGuiXSize,
+            int getGuiYSize,
+            int getScreenWidth,
+            int getScreenHeight) implements IGuiProperties {
     }
 }

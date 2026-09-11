@@ -20,29 +20,29 @@ import java.util.List;
 final class MinecraftTutorialRenderContext implements TutorialRenderContext {
 
     private static final ResourceLocation CHEST_GUI =
-            ResourceLocation.withDefaultNamespace("textures/gui/container/generic_54.png");
+            new ResourceLocation("textures/gui/container/generic_54.png");
     private static final ResourceLocation INVENTORY_GUI =
-            ResourceLocation.withDefaultNamespace("textures/gui/container/inventory.png");
+            new ResourceLocation("textures/gui/container/inventory.png");
     private static final ResourceLocation CRAFTING_GUI =
-            ResourceLocation.withDefaultNamespace("textures/gui/container/crafting_table.png");
+            new ResourceLocation("textures/gui/container/crafting_table.png");
     private static final ResourceLocation TUTORIAL_BACKDROP =
-            ResourceLocation.fromNamespaceAndPath(
+            new ResourceLocation(
                     "quickstackcraft", "textures/gui/tutorial_forest.png");
     private static final int BACKDROP_WIDTH = 3440;
     private static final int BACKDROP_HEIGHT = 1440;
     private static final int BACKDROP_CENTER_Y = 620;
     private static final ResourceLocation RECIPE_BOOK_GUI =
-            ResourceLocation.withDefaultNamespace("textures/gui/recipe_book.png");
+            new ResourceLocation("textures/gui/recipe_book.png");
     private static final ResourceLocation RECIPE_BOOK_BUTTON =
-            ResourceLocation.withDefaultNamespace("recipe_book/button");
+            new ResourceLocation("recipe_book/button");
     private static final ResourceLocation RECIPE_SLOT =
-            ResourceLocation.withDefaultNamespace("recipe_book/slot_craftable");
+            new ResourceLocation("recipe_book/slot_craftable");
     private static final ResourceLocation RECIPE_TAB =
-            ResourceLocation.withDefaultNamespace("recipe_book/tab");
+            new ResourceLocation("recipe_book/tab");
     private static final ResourceLocation RECIPE_TAB_SELECTED =
-            ResourceLocation.withDefaultNamespace("recipe_book/tab_selected");
+            new ResourceLocation("recipe_book/tab_selected");
     private static final ResourceLocation FILTER_DISABLED =
-            ResourceLocation.withDefaultNamespace("recipe_book/filter_disabled");
+            new ResourceLocation("recipe_book/filter_disabled");
     private static final Button QUICK_STACK_BUTTON =
             textToolbarButton(InventoryToolbarLayout.QUICK_STACK_LABEL, 0);
     private static final Button RESTOCK_BUTTON =

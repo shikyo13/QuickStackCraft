@@ -229,7 +229,7 @@ public final class QuickStackSettings {
     }
 
     private static ResourceLocation id(String namespace, String path) {
-        return ResourceLocation.fromNamespaceAndPath(namespace, path);
+        return new ResourceLocation(namespace, path);
     }
 
     private static String joinIdentifiers(Set<ResourceLocation> identifiers) {

@@ -34,7 +34,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,15 +54,46 @@ public final class ModNetworking {
 
     private ModNetworking() {}
 
+    private static final Map<ResourceLocation, PacketCodec<net.minecraft.network.FriendlyByteBuf, ?>> CODECS = new HashMap<>();
+
+    private static <T extends PacketPayload> void registerCodec(PacketPayload.Type<T> type,
+            PacketCodec<net.minecraft.network.FriendlyByteBuf, T> codec) {
+        CODECS.put(type.id(), codec);
+    }
+
+    private static <T extends PacketPayload> void registerReceiver(NetworkManager.Side side,
+            PacketPayload.Type<T> type, PacketCodec<net.minecraft.network.FriendlyByteBuf, T> codec,
+            java.util.function.BiConsumer<T, NetworkManager.PacketContext> receiver) {
+        registerCodec(type, codec);
+        NetworkManager.registerReceiver(side, type.id(), (buffer, context) -> receiver.accept(codec.decode(buffer), context));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends PacketPayload> net.minecraft.network.FriendlyByteBuf encode(T packet) {
+        var codec = (PacketCodec<net.minecraft.network.FriendlyByteBuf, T>) CODECS.get(packet.type().id());
+        if (codec == null) throw new IllegalArgumentException("Unregistered packet: " + packet.type().id());
+        var buffer = new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
+        codec.encode(buffer, packet);
+        return buffer;
+    }
+
+    public static void sendToServer(PacketPayload packet) {
+        NetworkManager.sendToServer(packet.type().id(), encode(packet));
+    }
+
+    public static void sendToPlayer(ServerPlayer player, PacketPayload packet) {
+        NetworkManager.sendToPlayer(player, packet.type().id(), encode(packet));
+    }
+
     public static void register() {
         // C2S: player inventory transfer actions
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.C2S,
                 InventoryActionC2SPacket.TYPE,
                 InventoryActionC2SPacket.CODEC,
                 ModNetworking::handleInventoryAction
         );
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.C2S,
                 QuickStackSlotC2SPacket.TYPE,
                 QuickStackSlotC2SPacket.CODEC,
@@ -70,20 +101,20 @@ public final class ModNetworking {
         );
 
         // C2S/S2C: in-game configuration screen
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.C2S,
                 ConfigRequestC2SPacket.TYPE,
                 ConfigRequestC2SPacket.CODEC,
                 ModNetworking::handleConfigRequest
         );
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.C2S,
                 ConfigSaveC2SPacket.TYPE,
                 ConfigSaveC2SPacket.CODEC,
                 ModNetworking::handleConfigSave
         );
         // C2S: transfer from an open supported storage screen
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.C2S,
                 OpenContainerTransferC2SPacket.TYPE,
                 OpenContainerTransferC2SPacket.CODEC,
@@ -91,14 +122,14 @@ public final class ModNetworking {
         );
 
         // C2S: preview nearby storage or edit the selected block type
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.C2S,
                 StorageListActionC2SPacket.TYPE,
                 StorageListActionC2SPacket.CODEC,
                 ModNetworking::handleStorageListAction
         );
         // C2S: server-validated recipe transfer from recipe viewers and the vanilla book
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.C2S,
                 RecipeTransferC2SPacket.TYPE,
                 RecipeTransferC2SPacket.CODEC,
@@ -106,14 +137,14 @@ public final class ModNetworking {
         );
 
         // C2S: Toggle Favorite
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.C2S,
                 FavoriteToggleC2SPacket.TYPE,
                 FavoriteToggleC2SPacket.CODEC,
                 ModNetworking::handleFavoriteToggle
         );
 
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.C2S,
                 TutorialSeenC2SPacket.TYPE,
                 TutorialSeenC2SPacket.CODEC,
@@ -121,7 +152,7 @@ public final class ModNetworking {
         );
 
         // C2S: Nearby Items Scan (for JEI availability)
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.C2S,
                 NearbyItemsScanC2SPacket.TYPE,
                 NearbyItemsScanC2SPacket.CODEC,
@@ -138,49 +169,49 @@ public final class ModNetworking {
             return;
         }
 
-        NetworkManager.registerS2CPayloadType(ConfigSyncS2CPacket.TYPE, ConfigSyncS2CPacket.CODEC);
-        NetworkManager.registerS2CPayloadType(
+        registerCodec(ConfigSyncS2CPacket.TYPE, ConfigSyncS2CPacket.CODEC);
+        registerCodec(
                 StorageListFeedbackS2CPacket.TYPE, StorageListFeedbackS2CPacket.CODEC);
-        NetworkManager.registerS2CPayloadType(FavoriteSyncS2CPacket.TYPE, FavoriteSyncS2CPacket.CODEC);
-        NetworkManager.registerS2CPayloadType(TutorialStatusS2CPacket.TYPE, TutorialStatusS2CPacket.CODEC);
-        NetworkManager.registerS2CPayloadType(NearbyItemsSyncS2CPacket.TYPE, NearbyItemsSyncS2CPacket.CODEC);
-        NetworkManager.registerS2CPayloadType(
+        registerCodec(FavoriteSyncS2CPacket.TYPE, FavoriteSyncS2CPacket.CODEC);
+        registerCodec(TutorialStatusS2CPacket.TYPE, TutorialStatusS2CPacket.CODEC);
+        registerCodec(NearbyItemsSyncS2CPacket.TYPE, NearbyItemsSyncS2CPacket.CODEC);
+        registerCodec(
                 ContainerHighlightS2CPacket.TYPE, ContainerHighlightS2CPacket.CODEC);
         LOGGER.info("Registered {} clientbound payload types for the dedicated server", CLIENTBOUND_PACKET_COUNT);
     }
 
     private static void registerClientboundReceivers() {
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.S2C,
                 ConfigSyncS2CPacket.TYPE,
                 ConfigSyncS2CPacket.CODEC,
                 ModNetworking::handleConfigSync
         );
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.S2C,
                 StorageListFeedbackS2CPacket.TYPE,
                 StorageListFeedbackS2CPacket.CODEC,
                 ModNetworking::handleStorageListFeedback
         );
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.S2C,
                 FavoriteSyncS2CPacket.TYPE,
                 FavoriteSyncS2CPacket.CODEC,
                 ModNetworking::handleFavoriteSync
         );
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.S2C,
                 TutorialStatusS2CPacket.TYPE,
                 TutorialStatusS2CPacket.CODEC,
                 ModNetworking::handleTutorialStatus
         );
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.S2C,
                 NearbyItemsSyncS2CPacket.TYPE,
                 NearbyItemsSyncS2CPacket.CODEC,
                 ModNetworking::handleNearbyItemsSync
         );
-        NetworkManager.registerReceiver(
+        registerReceiver(
                 NetworkManager.Side.S2C,
                 ContainerHighlightS2CPacket.TYPE,
                 ContainerHighlightS2CPacket.CODEC,
@@ -328,7 +359,7 @@ public final class ModNetworking {
 
             // Sync updated favorites back to client
             Set<Integer> favorites = FavoritesManager.getAll(player);
-            NetworkManager.sendToPlayer(player, new FavoriteSyncS2CPacket(favorites));
+            sendToPlayer(player, new FavoriteSyncS2CPacket(favorites));
         });
     }
 
@@ -412,7 +443,7 @@ public final class ModNetworking {
             return;
         }
 
-        NetworkManager.sendToPlayer(player, new ContainerHighlightS2CPacket(
+        sendToPlayer(player, new ContainerHighlightS2CPacket(
                 ContainerHighlightS2CPacket.HighlightKind.DESTINATION,
                 blockTargets(containers), entityTargets(containers)));
         player.displayClientMessage(
@@ -437,7 +468,7 @@ public final class ModNetworking {
 
         StorageListState state = StorageBlockLists.cycle(target.blockId());
         configRevision++;
-        NetworkManager.sendToPlayer(player, new StorageListFeedbackS2CPacket(
+        sendToPlayer(player, new StorageListFeedbackS2CPacket(
                 target.position(), target.blockId(), state));
         player.displayClientMessage(Component.translatable(switch (state) {
             case WHITELISTED -> "quickstackcraft.message.storage_whitelisted";
@@ -461,9 +492,9 @@ public final class ModNetworking {
                     || !activeMenu.stillValid(player)) {
                 return;
             }
-            RecipeHolder<?> holder = player.getServer().getRecipeManager().byKey(packet.recipeId()).orElse(null);
+            Recipe<?> holder = player.getServer().getRecipeManager().byKey(packet.recipeId()).orElse(null);
 
-            if (holder == null || !(holder.value() instanceof CraftingRecipe recipe)) {
+            if (holder == null || !(holder instanceof CraftingRecipe recipe)) {
                 return;
             }
 
@@ -563,7 +594,7 @@ public final class ModNetworking {
                 }
             }
 
-            NetworkManager.sendToPlayer(player, new NearbyItemsSyncS2CPacket(available));
+            sendToPlayer(player, new NearbyItemsSyncS2CPacket(available));
         });
     }
 
@@ -585,7 +616,7 @@ public final class ModNetworking {
             TransferResult result,
             ContainerHighlightS2CPacket.HighlightKind kind) {
         if (!result.blockPositions().isEmpty() || !result.entityIds().isEmpty()) {
-            NetworkManager.sendToPlayer(player, new ContainerHighlightS2CPacket(
+            sendToPlayer(player, new ContainerHighlightS2CPacket(
                     kind, result.blockPositions(), result.entityIds()));
             spawnHighlightParticles(player, result);
         }
@@ -635,11 +666,11 @@ public final class ModNetworking {
      */
     public static void syncFavoritesToPlayer(ServerPlayer player) {
         Set<Integer> favorites = FavoritesManager.getAll(player);
-        NetworkManager.sendToPlayer(player, new FavoriteSyncS2CPacket(favorites));
+        sendToPlayer(player, new FavoriteSyncS2CPacket(favorites));
     }
 
     public static void syncTutorialToPlayer(ServerPlayer player) {
-        NetworkManager.sendToPlayer(player,
+        sendToPlayer(player,
                 new TutorialStatusS2CPacket(TutorialProgressManager.hasSeen(player)));
     }
 
@@ -667,7 +698,7 @@ public final class ModNetworking {
 
     private static void syncConfigToPlayer(
             ServerPlayer player, long requestId, ConfigSyncS2CPacket.SyncReason reason) {
-        NetworkManager.sendToPlayer(player, new ConfigSyncS2CPacket(
+        sendToPlayer(player, new ConfigSyncS2CPacket(
                 QuickStackSettings.snapshot(),
                 StorageBlockLists.whitelist(),
                 StorageBlockLists.blacklist(),
@@ -678,6 +709,6 @@ public final class ModNetworking {
     }
 
     public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(QuickStackCraft.MOD_ID, path);
+        return new ResourceLocation(QuickStackCraft.MOD_ID, path);
     }
 }

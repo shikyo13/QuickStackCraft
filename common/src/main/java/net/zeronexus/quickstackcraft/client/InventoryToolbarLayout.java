@@ -23,8 +23,8 @@ public final class InventoryToolbarLayout {
     public static Position position(int anchorX, int anchorY, int count, int size, int gap,
                                     int screenWidth, int screenHeight, ToolbarPreferences preferences) {
         int toolbarWidth = count * size + Math.max(0, count - 1) * gap;
-        int x = Math.clamp(anchorX + preferences.offsetX(), 0, Math.max(0, screenWidth - toolbarWidth));
-        int y = Math.clamp(anchorY + preferences.offsetY(), 0, Math.max(0, screenHeight - size));
+        int x = net.minecraft.util.Mth.clamp(anchorX + preferences.offsetX(), 0, Math.max(0, screenWidth - toolbarWidth));
+        int y = net.minecraft.util.Mth.clamp(anchorY + preferences.offsetY(), 0, Math.max(0, screenHeight - size));
         return new Position(x, y);
     }
 

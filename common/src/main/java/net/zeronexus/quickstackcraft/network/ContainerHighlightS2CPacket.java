@@ -2,9 +2,6 @@ package net.zeronexus.quickstackcraft.network;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,18 +9,18 @@ import java.util.List;
 public record ContainerHighlightS2CPacket(
         HighlightKind kind,
         List<BlockPos> blockPositions,
-        List<Integer> entityIds) implements CustomPacketPayload {
+        List<Integer> entityIds) implements PacketPayload {
 
     public enum HighlightKind {
         DESTINATION,
         SOURCE
     }
 
-    public static final CustomPacketPayload.Type<ContainerHighlightS2CPacket> TYPE =
-            new CustomPacketPayload.Type<>(ModNetworking.id("highlight"));
+    public static final PacketPayload.Type<ContainerHighlightS2CPacket> TYPE =
+            new PacketPayload.Type<>(ModNetworking.id("highlight"));
 
-    public static final StreamCodec<FriendlyByteBuf, ContainerHighlightS2CPacket> CODEC =
-            StreamCodec.of(ContainerHighlightS2CPacket::encode, ContainerHighlightS2CPacket::decode);
+    public static final PacketCodec<FriendlyByteBuf, ContainerHighlightS2CPacket> CODEC =
+            PacketCodec.of(ContainerHighlightS2CPacket::encode, ContainerHighlightS2CPacket::decode);
 
     private static void encode(FriendlyByteBuf buf, ContainerHighlightS2CPacket pkt) {
         buf.writeEnum(pkt.kind);

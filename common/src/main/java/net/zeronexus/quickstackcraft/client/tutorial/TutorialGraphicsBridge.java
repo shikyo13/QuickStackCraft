@@ -41,7 +41,28 @@ final class TutorialGraphicsBridge {
 
     static void blitSprite(
             GuiGraphics graphics, ResourceLocation sprite, int x, int y, int width, int height) {
-        graphics.blitSprite(sprite, x, y, width, height);
+        // Minecraft 1.20.1 keeps recipe-book widgets in texture sheets.
+        ResourceLocation texture = new ResourceLocation("textures/gui/recipe_book.png");
+        int u, v, sourceWidth, sourceHeight;
+        switch (sprite.getPath()) {
+            case "recipe_book/button" -> {
+                texture = new ResourceLocation("textures/gui/recipe_button.png");
+                u = 0; v = 0; sourceWidth = 20; sourceHeight = 18;
+            }
+            case "recipe_book/slot_craftable" -> {
+                u = 29; v = 206; sourceWidth = 25; sourceHeight = 25;
+            }
+            case "recipe_book/tab", "recipe_book/tab_selected" -> {
+                u = sprite.getPath().endsWith("_selected") ? 188 : 153;
+                v = 2; sourceWidth = 35; sourceHeight = 27;
+            }
+            case "recipe_book/filter_disabled" -> {
+                u = 152; v = 41; sourceWidth = 26; sourceHeight = 16;
+            }
+            default -> throw new IllegalArgumentException("Unknown tutorial sprite: " + sprite);
+        }
+        blitRegionScaled(graphics, texture, x, y, width, height,
+                u, v, sourceWidth, sourceHeight, 256, 256);
     }
 
     static void blitRegionScaled(

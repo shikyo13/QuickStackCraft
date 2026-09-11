@@ -34,7 +34,7 @@ final class JeiTransferSupport {
     private static List<ItemStack> deduplicate(List<ItemStack> candidates) {
         java.util.ArrayList<ItemStack> unique = new java.util.ArrayList<>();
         for (ItemStack candidate : candidates) {
-            if (unique.stream().noneMatch(existing -> ItemStack.isSameItemSameComponents(existing, candidate))) {
+            if (unique.stream().noneMatch(existing -> ItemStack.isSameItemSameTags(existing, candidate))) {
                 unique.add(candidate);
             }
         }

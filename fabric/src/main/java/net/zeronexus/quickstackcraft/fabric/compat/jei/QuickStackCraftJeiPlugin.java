@@ -13,7 +13,7 @@ public class QuickStackCraftJeiPlugin implements IModPlugin {
 
     @Override
     public ResourceLocation getPluginUid() {
-        return ResourceLocation.fromNamespaceAndPath(QuickStackCraft.MOD_ID, "jei");
+        return new ResourceLocation(QuickStackCraft.MOD_ID, "jei");
     }
 
     @Override

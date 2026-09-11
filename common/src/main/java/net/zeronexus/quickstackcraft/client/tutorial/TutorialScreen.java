@@ -11,7 +11,6 @@ import net.zeronexus.quickstackcraft.client.UiIcon;
 import net.zeronexus.quickstackcraft.client.UiIconButton;
 import org.lwjgl.glfw.GLFW;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +69,7 @@ public final class TutorialScreen extends LayeredScreen {
                     .bounds(x, layout.chapterY(), chapterWidth, 20)
                     .build();
             button.setTooltip(Tooltip.create(scene.title()));
-            button.setTooltipDelay(Duration.ofMillis(300));
+            button.setTooltipDelay(300);
             chapterButtons.add(button);
             addRenderableWidget(button);
             x += chapterWidth + gap;
@@ -109,7 +108,7 @@ public final class TutorialScreen extends LayeredScreen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         playback.onFrame(System.nanoTime());
         updateControls();
-        renderBackground(graphics, mouseX, mouseY, delta);
+        renderBackground(graphics);
         TutorialGraphicsBridge.resetDepth(graphics);
         Layout layout = layout();
 

@@ -1,6 +1,5 @@
 package net.zeronexus.quickstackcraft.logic.fabric;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -30,7 +29,7 @@ public final class TutorialProgressManagerImpl {
             if (server != null) {
                 ServerLevel overworld = server.overworld();
                 return overworld.getDataStorage().computeIfAbsent(
-                        TutorialSavedData.factory(), "quickstackcraft_tutorial");
+                        TutorialSavedData::load, TutorialSavedData::new, "quickstackcraft_tutorial");
             }
         }
         return TutorialSavedData.EMPTY;
@@ -40,9 +39,6 @@ public final class TutorialProgressManagerImpl {
         private static final TutorialSavedData EMPTY = new TutorialSavedData();
         private final Set<UUID> seenPlayers = new HashSet<>();
 
-        static SavedData.Factory<TutorialSavedData> factory() {
-            return new SavedData.Factory<>(TutorialSavedData::new, TutorialSavedData::load, null);
-        }
 
         boolean hasSeen(UUID playerId) {
             return seenPlayers.contains(playerId);
@@ -55,14 +51,14 @@ public final class TutorialProgressManagerImpl {
         }
 
         @Override
-        public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+        public CompoundTag save(CompoundTag tag) {
             for (UUID playerId : seenPlayers) {
                 tag.putBoolean(playerId.toString(), true);
             }
             return tag;
         }
 
-        static TutorialSavedData load(CompoundTag tag, HolderLookup.Provider registries) {
+        static TutorialSavedData load(CompoundTag tag) {
             TutorialSavedData data = new TutorialSavedData();
             for (String key : tag.getAllKeys()) {
                 try {

@@ -1,6 +1,7 @@
 package net.zeronexus.quickstackcraft.client.tutorial;
 
-import dev.architectury.networking.NetworkManager;
+import net.zeronexus.quickstackcraft.network.ModNetworking;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.zeronexus.quickstackcraft.network.TutorialSeenC2SPacket;
@@ -39,7 +40,7 @@ public final class TutorialClientState {
         }
         seen = true;
         pendingFirstRun = false;
-        NetworkManager.sendToServer(new TutorialSeenC2SPacket());
+        ModNetworking.sendToServer(new TutorialSeenC2SPacket());
     }
 
     private static void refreshConnection(Minecraft minecraft) {

@@ -1,8 +1,8 @@
 {
     "required": true,
-    "package": "net.zeronexus.quickstackcraft.neoforge.mixin",
-    "refmap": "quickstackcraft-neoforge-refmap.json",
-    "compatibilityLevel": "JAVA_21",
+    "package": "net.zeronexus.quickstackcraft.forge.mixin",
+    "refmap": "quickstackcraft-forge-refmap.json",
+    "compatibilityLevel": "JAVA_17",
     "minVersion": "0.8",
     "mixins": [],
     "client": [

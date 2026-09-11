@@ -20,7 +20,7 @@ class StorageBlockListsTest {
     @Test
     void allowAndDenyListsAreMutuallyExclusive() {
         StorageBlockLists.resetForTests();
-        ResourceLocation barrel = ResourceLocation.fromNamespaceAndPath("minecraft", "barrel");
+        ResourceLocation barrel = new ResourceLocation("minecraft", "barrel");
 
         assertTrue(StorageBlockLists.whitelist(barrel));
         assertTrue(StorageBlockLists.isWhitelisted(barrel));
@@ -36,8 +36,8 @@ class StorageBlockListsTest {
         StorageBlockLists.resetForTests();
         StorageBlockLists.load(file);
 
-        ResourceLocation chest = ResourceLocation.fromNamespaceAndPath("minecraft", "chest");
-        ResourceLocation furnace = ResourceLocation.fromNamespaceAndPath("minecraft", "furnace");
+        ResourceLocation chest = new ResourceLocation("minecraft", "chest");
+        ResourceLocation furnace = new ResourceLocation("minecraft", "furnace");
         StorageBlockLists.whitelist(chest);
         StorageBlockLists.blacklist(furnace);
 
@@ -53,8 +53,8 @@ class StorageBlockListsTest {
     @Test
     void replacesTargetListsAndKeepsAllowEntriesAuthoritative() {
         StorageBlockLists.resetForTests();
-        ResourceLocation chest = ResourceLocation.fromNamespaceAndPath("minecraft", "chest");
-        ResourceLocation barrel = ResourceLocation.fromNamespaceAndPath("minecraft", "barrel");
+        ResourceLocation chest = new ResourceLocation("minecraft", "chest");
+        ResourceLocation barrel = new ResourceLocation("minecraft", "barrel");
 
         StorageBlockLists.replace(Set.of(chest), Set.of(chest, barrel));
 
@@ -66,7 +66,7 @@ class StorageBlockListsTest {
     @Test
     void cyclesDefaultWhitelistBlacklistAndBackToDefault() {
         StorageBlockLists.resetForTests();
-        ResourceLocation chest = ResourceLocation.fromNamespaceAndPath("minecraft", "chest");
+        ResourceLocation chest = new ResourceLocation("minecraft", "chest");
 
         assertEquals(StorageListState.DEFAULT, StorageBlockLists.state(chest));
         assertEquals(StorageListState.WHITELISTED, StorageBlockLists.cycle(chest));

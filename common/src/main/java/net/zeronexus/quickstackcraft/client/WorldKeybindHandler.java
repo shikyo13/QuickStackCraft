@@ -1,6 +1,7 @@
 package net.zeronexus.quickstackcraft.client;
 
-import dev.architectury.networking.NetworkManager;
+import net.zeronexus.quickstackcraft.network.ModNetworking;
+
 import net.minecraft.client.Minecraft;
 import net.zeronexus.quickstackcraft.compat.ExternalSlotLocks;
 import net.zeronexus.quickstackcraft.network.InventoryActionC2SPacket;
@@ -28,11 +29,11 @@ public final class WorldKeybindHandler {
             sendInventoryAction(InventoryActionC2SPacket.Action.DUMP);
         }
         while (ModKeybinds.PREVIEW_STORAGE.consumeClick()) {
-            NetworkManager.sendToServer(new StorageListActionC2SPacket(
+            ModNetworking.sendToServer(new StorageListActionC2SPacket(
                     StorageListActionC2SPacket.Action.SHOW_NEARBY));
         }
         while (ModKeybinds.CYCLE_STORAGE_LIST.consumeClick()) {
-            NetworkManager.sendToServer(new StorageListActionC2SPacket(
+            ModNetworking.sendToServer(new StorageListActionC2SPacket(
                     StorageListActionC2SPacket.Action.CYCLE_LOOKED_AT));
         }
         while (ModKeybinds.CONFIG.consumeClick()) {
@@ -41,6 +42,6 @@ public final class WorldKeybindHandler {
     }
 
     private static void sendInventoryAction(InventoryActionC2SPacket.Action action) {
-        NetworkManager.sendToServer(new InventoryActionC2SPacket(action, ExternalSlotLocks.snapshot()));
+        ModNetworking.sendToServer(new InventoryActionC2SPacket(action, ExternalSlotLocks.snapshot()));
     }
 }

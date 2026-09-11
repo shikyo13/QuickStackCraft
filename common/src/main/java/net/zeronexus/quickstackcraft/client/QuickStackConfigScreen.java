@@ -1,6 +1,7 @@
 package net.zeronexus.quickstackcraft.client;
 
-import dev.architectury.networking.NetworkManager;
+import net.zeronexus.quickstackcraft.network.ModNetworking;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -32,7 +33,6 @@ import net.zeronexus.quickstackcraft.network.ConfigSyncS2CPacket;
 import net.zeronexus.quickstackcraft.network.StorageListActionC2SPacket;
 import net.zeronexus.quickstackcraft.util.BlockSelection;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -136,7 +136,7 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
 
     public static Screen create(Screen parent) {
         long requestId = nextRequestId++;
-        NetworkManager.sendToServer(new ConfigRequestC2SPacket(requestId));
+        ModNetworking.sendToServer(new ConfigRequestC2SPacket(requestId));
         return new QuickStackConfigScreen(parent, requestId);
     }
 
@@ -507,7 +507,7 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
             Component label, Component tooltip, Button.OnPress onPress) {
         Button button = Button.builder(label, onPress).bounds(x, y, width, height).build();
         button.setTooltip(Tooltip.create(tooltip));
-        button.setTooltipDelay(Duration.ofMillis(300));
+        button.setTooltipDelay(300);
         addSettingsWidget(button);
         return button;
     }
@@ -709,7 +709,7 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
         if (dirtyServer && loaded && canEdit) {
             sendServerSettings();
         }
-        NetworkManager.sendToServer(new StorageListActionC2SPacket(
+        ModNetworking.sendToServer(new StorageListActionC2SPacket(
                 StorageListActionC2SPacket.Action.SHOW_NEARBY));
 
         Minecraft minecraft = Minecraft.getInstance();
@@ -738,7 +738,7 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
                 cachedSettings.outlineRgb(),
                 cachedSettings.outlineOpacity(),
                 cachedSettings.outlineLifetimeMs()));
-        NetworkManager.sendToServer(new ConfigSaveC2SPacket(
+        ModNetworking.sendToServer(new ConfigSaveC2SPacket(
                 current,
                 Set.copyOf(includedTargets),
                 Set.copyOf(excludedTargets),
@@ -777,7 +777,7 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        renderBackground(graphics, mouseX, mouseY, delta);
+        renderBackground(graphics);
         Layout layout = layout();
 
         graphics.fill(layout.panelLeft(), layout.panelTop(), layout.panelRight(), layout.panelBottom(), 0xEC111315);
@@ -925,9 +925,9 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void renderBackground(GuiGraphics graphics) {
         if (!renderingWidgets) {
-            super.renderBackground(graphics, mouseX, mouseY, delta);
+            super.renderBackground(graphics);
         }
     }
 
@@ -1031,14 +1031,14 @@ public class QuickStackConfigScreen extends AbstractContainerScreen<QuickStackCo
             rgb = Integer.parseInt(color, 16);
             this.selected = selected;
             setTooltip(Tooltip.create(Component.translatable("quickstackcraft.config.color_preset", color)));
-            setTooltipDelay(Duration.ofMillis(250));
+            setTooltipDelay(250);
         }
 
         @Override
         protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             int border = selected ? 0xFFFFD34E : (isHoveredOrFocused() ? 0xFFFFFFFF : 0xFF777777);
-            graphics.fill(getX(), getY(), getRight(), getBottom(), border);
-            graphics.fill(getX() + 2, getY() + 2, getRight() - 2, getBottom() - 2, 0xFF000000 | rgb);
+            graphics.fill(getX(), getY(), (getX() + getWidth()), (getY() + getHeight()), border);
+            graphics.fill(getX() + 2, getY() + 2, (getX() + getWidth()) - 2, (getY() + getHeight()) - 2, 0xFF000000 | rgb);
         }
 
         @Override
