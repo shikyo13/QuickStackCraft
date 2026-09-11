@@ -7,7 +7,7 @@
 
 Terraria-style inventory management for Minecraft. Quick Stack matching items into nearby storage, restock partial inventory stacks, dump unlocked items, protect important slots, and craft with ingredients stored around you.
 
-QuickStack & Craft is available for **Minecraft 1.21.1 and 1.21.4** on **Fabric and NeoForge**. This branch adds **Minecraft 1.20.1 on Fabric and Forge**; those builds are awaiting gameplay verification. All versions require [Architectury API](https://modrinth.com/mod/architectury-api).
+QuickStack & Craft is available for **Minecraft 1.21.1 and 1.21.4** on **Fabric and NeoForge**. This branch supports **Minecraft 1.20.1 on Fabric and Forge**. All versions require [Architectury API](https://modrinth.com/mod/architectury-api).
 
 [Watch the QuickStack & Craft 1.0 showcase](https://www.youtube.com/watch?v=l_6XsxF90Pw)
 
@@ -57,7 +57,7 @@ The next update is 1.1. See the [roadmap](ROADMAP.md) for planned improvements a
 
 | Minecraft | Fabric | Forge | NeoForge |
 | --- | --- | --- | --- |
-| 1.20.1 | Built; gameplay pending | Built; gameplay pending | — |
+| 1.20.1 | 1.1.0 | 1.1.0 | — |
 | 1.21.1 | Released | — | Released |
 | 1.21.4 | Released | — | Released |
 

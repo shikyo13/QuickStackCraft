@@ -4,7 +4,7 @@
 
 Target: Minecraft 1.20.1 on Fabric and Forge; Minecraft 1.21.1 and 1.21.4 on Fabric and NeoForge.
 
-The 1.20.1 backport builds for both loaders and passes the existing automated tests. It retains the 1.1 inventory actions, settings and animated guide. Background gameplay verification and publication remain pending. Forge 1.21.1 is excluded because Architectury API has no matching release.
+The 1.20.1 backport builds for both loaders and passes the existing automated tests. It retains the 1.1 inventory actions, settings and animated guide. Background gameplay verification is complete; the 1.20.1 release adds both loaders. Forge 1.21.1 is excluded because Architectury API has no matching release.
 
 The features below are implemented in the 1.1 development branches. Both versions build for both loaders. Minecraft 1.21.1 NeoForge gameplay covers transfers, restocking, locks, nearby crafting through EMI, button preferences, and the animated guide. See [gameplay notes](docs/tutorial-qa.md) for the tested environment and remaining coverage.
 
