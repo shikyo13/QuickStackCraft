@@ -335,7 +335,7 @@ public final class TutorialScenes {
         @Override
         public void render(TutorialRenderContext context, double time) {
             double camera = context.transition(time, 8.5D, 10.0D);
-            context.beginScene(lerp(0.0D, -12.0D, camera), 0.0D, lerp(1.0D, 1.06D, camera));
+            context.beginScene(lerp(0.0D, 8.0D, camera), 0.0D, lerp(1.0D, 1.06D, camera));
             context.renderWorldBackdrop();
 
             float chestOpen;
