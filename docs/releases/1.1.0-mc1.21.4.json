@@ -1,0 +1,29 @@
+{
+  "version": "1.1.0",
+  "date": "2026-09-11",
+  "validation": "Build and common tests passed. Existing gameplay evidence is in docs/tutorial-qa.md; no new 1.21.4 gameplay session was run for this release.",
+  "artifacts": [
+    {
+      "minecraft": "1.21.4",
+      "loader": "fabric",
+      "filename": "quickstackcraft-fabric-1.1.0+1.21.4.jar",
+      "sha256": "6b347eb0e3a1538fd2453deadade08e6ef6cfd61c1bd9c8b33a77d6f6125aace",
+      "modrinth_version_id": "OvMpiD0i",
+      "curseforge_file_id": 8860019,
+      "curseforge_status": "submitted; awaiting approval",
+      "github_release": "https://github.com/shikyo13/QuickStackCraft/releases/tag/1.1.0%2B1.21.4",
+      "uploaded_hashes_verified": true
+    },
+    {
+      "minecraft": "1.21.4",
+      "loader": "neoforge",
+      "filename": "quickstackcraft-neoforge-1.1.0+1.21.4.jar",
+      "sha256": "f1dc07055e2872801edf7851b3874846fa3b5921ee7fbe3b82f02f6ad3464d51",
+      "modrinth_version_id": "PVNvQAH4",
+      "curseforge_file_id": 8860040,
+      "curseforge_status": "submitted; awaiting approval",
+      "github_release": "https://github.com/shikyo13/QuickStackCraft/releases/tag/1.1.0%2B1.21.4",
+      "uploaded_hashes_verified": true
+    }
+  ]
+}
