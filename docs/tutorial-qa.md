@@ -30,3 +30,7 @@ Watched the original Inventory, Crafting, and Storage chapters before the final 
 The final callout revision replaces the generic transfer symbol with an outline around the selected slot and the labels “Move this stack” and “The other stack stays here.” It has build and translation coverage; its final appearance has not been rechecked in Minecraft.
 
 Fabric gameplay, Minecraft 1.21.4 gameplay, multiplayer, and optional backpack integrations are not covered by this session. Automated transfer tests cover additional item-conservation and stale-menu cases.
+
+## 1.1.0 release verification — September 11, 2026
+
+Both 1.21 branches passed `build :common:test`, producing the Fabric and NeoForge release jars. Uploaded GitHub and CurseForge files match the local SHA-256 hashes; Modrinth file hashes and required dependencies match. Release receipts are in `docs/releases/`. Existing gameplay evidence above remains the scope of runtime coverage; no additional Minecraft client was launched for this release. The final guide callout and recipe-book camera changes were also exercised in the 1.20.1 backport gameplay session.
