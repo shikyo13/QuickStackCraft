@@ -58,11 +58,11 @@ See the [roadmap](ROADMAP.md) for version coverage and community requests.
 
 | Minecraft | Fabric | Forge | NeoForge |
 | --- | --- | --- | --- |
-| 1.20.1 | 1.1.0 | 1.1.0 | — |
-| 1.21.1 | 1.1.0 | — | 1.1.0 |
-| 1.21.4 | 1.1.0 | — | 1.1.0 |
+| 1.20.1 | 1.1.2 | 1.1.2 | — |
+| 1.21.1 | 1.1.2 | — | 1.1.2 |
+| 1.21.4 | 1.1.2 | — | 1.1.2 |
 
-[Download the 1.20.1 release](https://github.com/shikyo13/QuickStackCraft/releases/tag/1.1.0%2B1.20.1). Its source is on [mc/1.20.1](https://github.com/shikyo13/QuickStackCraft/tree/mc/1.20.1). Forge 1.21.1 is excluded because Architectury API has no matching Forge release.
+[Download the 1.20.1 release](https://github.com/shikyo13/QuickStackCraft/releases/tag/1.1.2%2B1.20.1). Its source is on [mc/1.20.1](https://github.com/shikyo13/QuickStackCraft/tree/mc/1.20.1). Forge 1.21.1 is excluded because Architectury API has no matching Forge release.
 
 See the [roadmap](ROADMAP.md) for community requests and future improvements.
 

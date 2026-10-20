@@ -2,8 +2,8 @@
 
 ## Version coverage
 
-- Minecraft 1.20.1: Fabric and Forge, released as 1.1.0.
-- Minecraft 1.21.1 and 1.21.4: Fabric and NeoForge, released as 1.1.0.
+- Minecraft 1.20.1: Fabric and Forge, released as 1.1.2.
+- Minecraft 1.21.1 and 1.21.4: Fabric and NeoForge, released as 1.1.2.
 - Forge 1.21.1 has no matching Architectury API release. NeoForge 1.20.1 is outside the maintained loader combinations.
 
 ## Added in 1.1
