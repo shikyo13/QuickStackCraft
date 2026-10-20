@@ -1,0 +1,29 @@
+{
+  "version": "1.1.2",
+  "date": "2026-10-20",
+  "validation": "Build and common tests passed. No 1.21.4 gameplay session was run; the change is identical to the 1.21.1 release, which was checked in game.",
+  "artifacts": [
+    {
+      "minecraft": "1.21.4",
+      "loader": "fabric",
+      "filename": "quickstackcraft-fabric-1.1.2+1.21.4.jar",
+      "sha256": "e65e0f37fdcfda24e8d6a53ae89ad4a3bf45b1dd7e0267ca7e464f9fd020a309",
+      "modrinth_version_id": "rwThPpAb",
+      "curseforge_file_id": 9268690,
+      "curseforge_status": "uploaded; CDN file hash verified; approval not independently confirmed",
+      "github_release": "https://github.com/shikyo13/QuickStackCraft/releases/tag/1.1.2%2B1.21.4",
+      "uploaded_hashes_verified": true
+    },
+    {
+      "minecraft": "1.21.4",
+      "loader": "neoforge",
+      "filename": "quickstackcraft-neoforge-1.1.2+1.21.4.jar",
+      "sha256": "8d291725323eeb3546314d64d96ac45dc0afee0bc5aa7b807e99546d08919dcd",
+      "modrinth_version_id": "Vybb6Qxo",
+      "curseforge_file_id": 9268688,
+      "curseforge_status": "uploaded; CDN file hash verified; approval not independently confirmed",
+      "github_release": "https://github.com/shikyo13/QuickStackCraft/releases/tag/1.1.2%2B1.21.4",
+      "uploaded_hashes_verified": true
+    }
+  ]
+}
