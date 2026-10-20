@@ -1,6 +1,14 @@
 # Changelog
 
-## 1.1.0 (unreleased)
+## 1.1.2
+
+- JEI's recipe transfer button now marks ingredients that are missing from both the inventory and nearby storage in red, matching JEI's own behavior, instead of only showing a tooltip.
+
+## 1.1.1
+
+- Fixed Forge 1.20.1 dedicated servers crashing at startup by loading client-only settings during mod initialization. Released for Forge 1.20.1 only and included in 1.1.2 for every version.
+
+## 1.1.0
 
 - Added hover-and-hold access to the animated guide, using the player's forward key.
 - Added a Controls chapter demonstrating the hovered-stack shortcut and button placement, visibility, and reset settings.

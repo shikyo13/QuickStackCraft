@@ -57,9 +57,9 @@ See the [roadmap](ROADMAP.md) for version coverage and community requests.
 
 | Minecraft | Fabric | Forge | NeoForge |
 | --- | --- | --- | --- |
-| 1.20.1 | 1.1.0 | 1.1.0 | — |
-| 1.21.1 | 1.1.0 | — | 1.1.0 |
-| 1.21.4 | 1.1.0 | — | 1.1.0 |
+| 1.20.1 | 1.1.2 | 1.1.2 | — |
+| 1.21.1 | 1.1.2 | — | 1.1.2 |
+| 1.21.4 | 1.1.2 | — | 1.1.2 |
 
 Forge 1.21.1 is not supported because Architectury API does not publish a Forge build for that version.
 
