@@ -1,0 +1,29 @@
+{
+  "version": "1.1.2",
+  "date": "2026-10-20",
+  "validation": "Build and common tests passed. The Forge jar started a dedicated server cleanly and a client on the same jar showed the JEI missing-ingredient highlight and completed a nearby transfer. The Fabric 1.20.1 jar was build- and test-checked only.",
+  "artifacts": [
+    {
+      "minecraft": "1.20.1",
+      "loader": "fabric",
+      "filename": "quickstackcraft-fabric-1.1.2+1.20.1.jar",
+      "sha256": "80aa613c45b16250bf35abd74837242ab77a17386992a82c99cf14516ae24021",
+      "modrinth_version_id": "w9FUM1aX",
+      "curseforge_file_id": 9268684,
+      "curseforge_status": "uploaded; CDN file hash verified; approval not independently confirmed",
+      "github_release": "https://github.com/shikyo13/QuickStackCraft/releases/tag/1.1.2%2B1.20.1",
+      "uploaded_hashes_verified": true
+    },
+    {
+      "minecraft": "1.20.1",
+      "loader": "forge",
+      "filename": "quickstackcraft-forge-1.1.2+1.20.1.jar",
+      "sha256": "01f00e791cdd71f394dae7f335345c1ee94fd85f77fbd5b032096facb491a2f5",
+      "modrinth_version_id": "RGGPuun7",
+      "curseforge_file_id": 9268683,
+      "curseforge_status": "uploaded; CDN file hash verified; approval not independently confirmed",
+      "github_release": "https://github.com/shikyo13/QuickStackCraft/releases/tag/1.1.2%2B1.20.1",
+      "uploaded_hashes_verified": true
+    }
+  ]
+}
