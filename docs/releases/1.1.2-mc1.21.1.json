@@ -1,0 +1,29 @@
+{
+  "version": "1.1.2",
+  "date": "2026-10-20",
+  "validation": "Build and common tests passed. The JEI missing-ingredient highlight, quantity-aware partial highlight and nearby transfer were checked in game on NeoForge; the highlight was also checked on Fabric.",
+  "artifacts": [
+    {
+      "minecraft": "1.21.1",
+      "loader": "fabric",
+      "filename": "quickstackcraft-fabric-1.1.2+1.21.1.jar",
+      "sha256": "21d68f0622d5e3fd9f84846bf6cd41c12dabbb14b1c88c6e76c72cf374f743a4",
+      "modrinth_version_id": "9rBR3jDb",
+      "curseforge_file_id": 9268686,
+      "curseforge_status": "uploaded; CDN file hash verified; approval not independently confirmed",
+      "github_release": "https://github.com/shikyo13/QuickStackCraft/releases/tag/1.1.2%2B1.21.1",
+      "uploaded_hashes_verified": true
+    },
+    {
+      "minecraft": "1.21.1",
+      "loader": "neoforge",
+      "filename": "quickstackcraft-neoforge-1.1.2+1.21.1.jar",
+      "sha256": "1163f4a11be8f396a57a3171197c6934e482e7e25eb22271d76c9ff7dc879dbf",
+      "modrinth_version_id": "Su1xdAMY",
+      "curseforge_file_id": 9268685,
+      "curseforge_status": "uploaded; CDN file hash verified; approval not independently confirmed",
+      "github_release": "https://github.com/shikyo13/QuickStackCraft/releases/tag/1.1.2%2B1.21.1",
+      "uploaded_hashes_verified": true
+    }
+  ]
+}
