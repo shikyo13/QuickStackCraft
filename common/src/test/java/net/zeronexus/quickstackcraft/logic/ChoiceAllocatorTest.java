@@ -43,4 +43,18 @@ class ChoiceAllocatorTest {
         assertFalse(result.complete());
         assertTrue(result.selected().isEmpty());
     }
+
+    @Test
+    void reportsOnlyTheSlotsThatCannotBeFilled() {
+        Map<String, Integer> available = Map.of("oak", 1, "birch", 1);
+
+        ChoiceAllocator.Allocation<String> unavailable = ChoiceAllocator.allocate(
+                List.of(List.of("oak", "birch"), List.of("oak"), List.of()), available, 1);
+        ChoiceAllocator.Allocation<String> shortStock = ChoiceAllocator.allocate(
+                List.of(List.of("oak"), List.of("oak", "birch"), List.of("oak", "birch")), available, 1);
+
+        assertFalse(unavailable.complete());
+        assertEquals(List.of(2), unavailable.missing());
+        assertEquals(1, shortStock.missing().size());
+    }
 }

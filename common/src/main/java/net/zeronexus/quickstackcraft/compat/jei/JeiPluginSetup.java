@@ -10,8 +10,11 @@ public final class JeiPluginSetup {
     private JeiPluginSetup() {}
 
     public static void registerCrafting(IRecipeTransferRegistration registration) {
-        registration.addRecipeTransferHandler(new CraftFromNearbyTransferHandler(), RecipeTypes.CRAFTING);
-        registration.addRecipeTransferHandler(new CraftFromNearbyCraftingTransferHandler(), RecipeTypes.CRAFTING);
+        var transferHelper = registration.getTransferHelper();
+        registration.addRecipeTransferHandler(
+                new CraftFromNearbyTransferHandler(transferHelper), RecipeTypes.CRAFTING);
+        registration.addRecipeTransferHandler(
+                new CraftFromNearbyCraftingTransferHandler(transferHelper), RecipeTypes.CRAFTING);
     }
 
     public static void registerSettingsIntegration(IGuiHandlerRegistration registration) {

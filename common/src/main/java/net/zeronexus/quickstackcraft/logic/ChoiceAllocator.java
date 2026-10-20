@@ -11,6 +11,7 @@ import java.util.Map;
 
 /**
  * Assigns one available choice to every required slot without depending on display order.
+ * When no complete assignment exists, reports the fewest slots that cannot be filled.
  */
 public final class ChoiceAllocator {
 
@@ -23,7 +24,7 @@ public final class ChoiceAllocator {
             throw new IllegalArgumentException("amountPerSlot must be positive");
         }
         if (options.isEmpty()) {
-            return new Allocation<>(true, List.of());
+            return new Allocation<>(true, List.of(), List.of());
         }
 
         List<List<K>> normalized = new ArrayList<>(options.size());
@@ -33,9 +34,6 @@ public final class ChoiceAllocator {
                 if (option != null) {
                     unique.add(option);
                 }
-            }
-            if (unique.isEmpty()) {
-                return new Allocation<>(false, List.of());
             }
             normalized.add(new ArrayList<>(unique));
         }
@@ -56,13 +54,18 @@ public final class ChoiceAllocator {
         Arrays.fill(unitOwners, -1);
 
         List<K> selected = new ArrayList<>(Collections.nCopies(normalized.size(), null));
+        List<Integer> missing = new ArrayList<>();
         for (int slot : order) {
             if (!assign(slot, normalized, unitsByChoice, unitOwners,
                     new boolean[unitCount], selected)) {
-                return new Allocation<>(false, List.of());
+                missing.add(slot);
             }
         }
-        return new Allocation<>(true, selected);
+        if (!missing.isEmpty()) {
+            Collections.sort(missing);
+            return new Allocation<>(false, List.of(), missing);
+        }
+        return new Allocation<>(true, selected, List.of());
     }
 
     private static <K> Map<K, List<Integer>> createCapacityUnits(List<List<K>> options,
@@ -121,9 +124,10 @@ public final class ChoiceAllocator {
         return count;
     }
 
-    public record Allocation<K>(boolean complete, List<K> selected) {
+    public record Allocation<K>(boolean complete, List<K> selected, List<Integer> missing) {
         public Allocation {
             selected = Collections.unmodifiableList(new ArrayList<>(selected));
+            missing = List.copyOf(missing);
         }
     }
 }
