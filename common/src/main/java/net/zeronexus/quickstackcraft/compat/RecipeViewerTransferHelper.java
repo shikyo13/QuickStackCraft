@@ -29,12 +29,18 @@ public final class RecipeViewerTransferHelper {
         }
     }
 
-    public static boolean hasIngredients(List<List<ItemStack>> choices, Player player) {
+    /**
+     * Returns the indexes of {@code choices} that cannot be filled from the player's inventory,
+     * crafting grid and nearby storage. Entries without any choice are ignored.
+     */
+    public static List<Integer> missingIngredientSlots(List<List<ItemStack>> choices, Player player) {
         long externalLockedMask = ExternalSlotLocks.snapshot();
         List<StackGroup> groups = collectAvailableItems(player, externalLockedMask);
         List<List<Integer>> allocationOptions = new ArrayList<>();
+        List<Integer> requiredSlots = new ArrayList<>();
 
-        for (List<ItemStack> slotChoices : choices) {
+        for (int slot = 0; slot < choices.size(); slot++) {
+            List<ItemStack> slotChoices = choices.get(slot);
             if (slotChoices.stream().noneMatch(stack -> !stack.isEmpty())) {
                 continue;
             }
@@ -48,13 +54,16 @@ public final class RecipeViewerTransferHelper {
                 }
             }
             allocationOptions.add(matchingGroups);
+            requiredSlots.add(slot);
         }
 
         Map<Integer, Integer> available = new HashMap<>();
         for (int i = 0; i < groups.size(); i++) {
             available.put(i, groups.get(i).count());
         }
-        return ChoiceAllocator.allocate(allocationOptions, available, 1).complete();
+        return ChoiceAllocator.allocate(allocationOptions, available, 1).missing().stream()
+                .map(requiredSlots::get)
+                .toList();
     }
 
     private static List<StackGroup> collectAvailableItems(Player player, long externalLockedMask) {

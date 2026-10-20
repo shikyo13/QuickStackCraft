@@ -7,6 +7,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
+import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -29,6 +30,12 @@ public class CraftFromNearbyCraftingTransferHandler implements IRecipeTransferHa
 
     private static final Logger LOGGER = LoggerFactory.getLogger("QuickStackCraft-JEI");
 
+    private final IRecipeTransferHandlerHelper transferHelper;
+
+    public CraftFromNearbyCraftingTransferHandler(IRecipeTransferHandlerHelper transferHelper) {
+        this.transferHelper = transferHelper;
+    }
+
     @Override
     public Class<CraftingMenu> getContainerClass() {
         return CraftingMenu.class;
@@ -50,10 +57,8 @@ public class CraftFromNearbyCraftingTransferHandler implements IRecipeTransferHa
             IRecipeSlotsView recipeSlots, Player player,
             boolean maxTransfer, boolean doTransfer) {
 
-        var ingredients = JeiTransferSupport.readIngredientChoices(recipeSlots);
-
         if (!doTransfer) {
-            return JeiTransferSupport.availabilityStatus(ingredients, player);
+            return JeiTransferSupport.availabilityStatus(recipeSlots, player, transferHelper);
         }
 
         LOGGER.info("[QuickStackCraft] Craft from nearby: recipe={}", recipe.getId());
