@@ -45,7 +45,7 @@ public abstract class RecipeBookComponentMixin {
     }
 
     @Redirect(
-            method = "mouseClicked",
+            method = "tryPlaceRecipe",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePlaceRecipe(ILnet/minecraft/world/item/crafting/display/RecipeDisplayId;Z)V"
@@ -66,7 +66,7 @@ public abstract class RecipeBookComponentMixin {
             method = "updateStackedContents",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/screens/recipebook/RecipeBookComponent;updateCollections(ZZ)V"
+                    target = "Lnet/minecraft/client/gui/screens/recipebook/RecipeBookComponent;selectMatchingRecipes()V"
             )
     )
     private void quickstackcraft$includeNearbyItemsInRecipeBook(CallbackInfo ci) {

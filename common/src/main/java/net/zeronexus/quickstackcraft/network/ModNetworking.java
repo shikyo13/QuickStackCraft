@@ -4,6 +4,7 @@ import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundPlaceGhostRecipePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -476,6 +477,7 @@ public final class ModNetworking {
 
             RecipeManager recipeManager = player.getServer().getRecipeManager();
             RecipeHolder<?> holder;
+            net.minecraft.world.item.crafting.display.RecipeDisplay display = null;
             boolean requireUnlockedRecipe;
             if (packet.displayId() != null) {
                 RecipeManager.ServerDisplayInfo displayInfo =
@@ -484,6 +486,7 @@ public final class ModNetworking {
                     return;
                 }
                 holder = displayInfo.parent();
+                display = displayInfo.display().display();
                 requireUnlockedRecipe = true;
             } else if (packet.recipeId() != null) {
                 var recipeKey = ResourceKey.create(Registries.RECIPE, packet.recipeId());
@@ -510,6 +513,9 @@ public final class ModNetworking {
                     slot -> FavoritesManager.isFavorited(player, slot) || packet.isLocked(slot),
                     packet.maxTransfer());
 
+            boolean showPreview = !result.isComplete() && display != null
+                    && CraftFromNearbyLogic.clearGridForPreview(player, craftingMenu.getInputGridSlots(),
+                            slot -> FavoritesManager.isFavorited(player, slot) || packet.isLocked(slot));
             activeMenu.broadcastChanges();
 
             if (result.isComplete()) {
@@ -517,6 +523,8 @@ public final class ModNetworking {
                         Component.translatable("quickstackcraft.message.craft_ready",
                                 result.placed()),
                         true);
+            } else if (showPreview) {
+                player.connection.send(new ClientboundPlaceGhostRecipePacket(activeMenu.containerId, display));
             } else {
                 player.displayClientMessage(
                         Component.translatable("quickstackcraft.message.craft_no_ingredients"),

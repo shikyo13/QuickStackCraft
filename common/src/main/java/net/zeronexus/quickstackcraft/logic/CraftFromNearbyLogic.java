@@ -27,6 +27,17 @@ public final class CraftFromNearbyLogic {
 
     private CraftFromNearbyLogic() {}
 
+    public static boolean clearGridForPreview(Player player, List<Slot> craftSlots,
+                                              IntPredicate isProtected) {
+        Inventory inventory = player.getInventory();
+        if (!canClearGrid(inventory, craftSlots, isProtected)
+                || !clearGrid(inventory, craftSlots, isProtected)) {
+            return false;
+        }
+        inventory.setChanged();
+        return true;
+    }
+
     public static CraftResult execute(Player player, List<Optional<Ingredient>> ingredients,
                                       List<Slot> craftSlots, List<ContainerAccess> containers,
                                       IntPredicate isProtected, boolean maxTransfer) {

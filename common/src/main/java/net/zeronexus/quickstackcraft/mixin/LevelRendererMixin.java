@@ -1,11 +1,11 @@
 package net.zeronexus.quickstackcraft.mixin;
 
+import com.mojang.blaze3d.resource.GraphicsResourceAllocator;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.phys.Vec3;
 import net.zeronexus.quickstackcraft.client.ContainerHighlightRenderer;
@@ -20,8 +20,8 @@ public abstract class LevelRendererMixin {
 
     @Inject(method = "renderLevel", at = @At("RETURN"))
     private void quickstackcraft$renderContainerHighlights(
-            DeltaTracker deltaTracker, boolean renderBlockOutline,
-            Camera camera, GameRenderer gameRenderer, LightTexture lightTexture,
+            GraphicsResourceAllocator allocator, DeltaTracker deltaTracker, boolean renderBlockOutline,
+            Camera camera, GameRenderer gameRenderer,
             Matrix4f modelView, Matrix4f projection, CallbackInfo ci) {
 
         if (!ContainerHighlightRenderer.hasHighlights()) return;
