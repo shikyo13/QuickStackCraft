@@ -12,6 +12,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.zeronexus.quickstackcraft.client.NearbyItemsCache;
 import net.zeronexus.quickstackcraft.compat.ExternalSlotLocks;
 import net.zeronexus.quickstackcraft.network.NearbyItemsScanC2SPacket;
+import net.zeronexus.quickstackcraft.network.RecipeBookTransferC2SPacket;
 import net.zeronexus.quickstackcraft.network.RecipeTransferC2SPacket;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -54,9 +55,13 @@ public abstract class RecipeBookComponentMixin {
     private void quickstackcraft$placeRecipeFromNearby(
             MultiPlayerGameMode gameMode, int containerId, RecipeHolder<?> recipe, boolean maxTransfer) {
         if (recipe.value() instanceof CraftingRecipe) {
-            NetworkManager.sendToServer(new RecipeTransferC2SPacket(
-                    containerId, recipe.id(), maxTransfer,
-                    ExternalSlotLocks.snapshot()));
+            RecipeTransferC2SPacket transfer = new RecipeTransferC2SPacket(
+                    containerId, recipe.id(), maxTransfer, ExternalSlotLocks.snapshot());
+            if (NetworkManager.canServerReceive(RecipeBookTransferC2SPacket.TYPE)) {
+                NetworkManager.sendToServer(new RecipeBookTransferC2SPacket(transfer));
+            } else {
+                NetworkManager.sendToServer(transfer);
+            }
         } else {
             gameMode.handlePlaceRecipe(containerId, recipe, maxTransfer);
         }
