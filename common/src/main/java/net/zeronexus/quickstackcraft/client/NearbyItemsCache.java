@@ -33,6 +33,10 @@ public final class NearbyItemsCache {
 
     /** Check if the cache is stale and needs a server refresh. */
     public static boolean needsRefresh(long currentTick) {
+        if (currentTick < lastQueryTick) {
+            clear();
+            return true;
+        }
         return currentTick - lastQueryTick >= REFRESH_INTERVAL;
     }
 

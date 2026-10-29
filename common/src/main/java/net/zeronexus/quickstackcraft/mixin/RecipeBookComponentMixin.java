@@ -1,5 +1,6 @@
 package net.zeronexus.quickstackcraft.mixin;
 
+import dev.architectury.networking.NetworkManager;
 import net.zeronexus.quickstackcraft.network.ModNetworking;
 
 import net.minecraft.client.Minecraft;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.zeronexus.quickstackcraft.client.NearbyItemsCache;
 import net.zeronexus.quickstackcraft.compat.ExternalSlotLocks;
 import net.zeronexus.quickstackcraft.network.NearbyItemsScanC2SPacket;
+import net.zeronexus.quickstackcraft.network.RecipeBookTransferC2SPacket;
 import net.zeronexus.quickstackcraft.network.RecipeTransferC2SPacket;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -55,9 +57,13 @@ public abstract class RecipeBookComponentMixin {
     private void quickstackcraft$placeRecipeFromNearby(
             MultiPlayerGameMode gameMode, int containerId, Recipe<?> recipe, boolean maxTransfer) {
         if (recipe instanceof CraftingRecipe) {
-            ModNetworking.sendToServer(new RecipeTransferC2SPacket(
-                    containerId, recipe.getId(), maxTransfer,
-                    ExternalSlotLocks.snapshot()));
+            RecipeTransferC2SPacket transfer = new RecipeTransferC2SPacket(
+                    containerId, recipe.getId(), maxTransfer, ExternalSlotLocks.snapshot());
+            if (NetworkManager.canServerReceive(RecipeBookTransferC2SPacket.TYPE.id())) {
+                ModNetworking.sendToServer(new RecipeBookTransferC2SPacket(transfer));
+            } else {
+                ModNetworking.sendToServer(transfer);
+            }
         } else {
             gameMode.handlePlaceRecipe(containerId, recipe, maxTransfer);
         }

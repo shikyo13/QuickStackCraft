@@ -4,6 +4,7 @@ import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundPlaceGhostRecipePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
@@ -134,6 +135,12 @@ public final class ModNetworking {
                 RecipeTransferC2SPacket.TYPE,
                 RecipeTransferC2SPacket.CODEC,
                 ModNetworking::handleRecipeTransfer
+        );
+        registerReceiver(
+                NetworkManager.Side.C2S,
+                RecipeBookTransferC2SPacket.TYPE,
+                RecipeBookTransferC2SPacket.CODEC,
+                ModNetworking::handleRecipeBookTransfer
         );
 
         // C2S: Toggle Favorite
@@ -484,6 +491,16 @@ public final class ModNetworking {
     }
 
     private static void handleRecipeTransfer(RecipeTransferC2SPacket packet, NetworkManager.PacketContext context) {
+        handleRecipeTransfer(packet, context, false);
+    }
+
+    private static void handleRecipeBookTransfer(RecipeBookTransferC2SPacket packet,
+                                                 NetworkManager.PacketContext context) {
+        handleRecipeTransfer(packet.transfer(), context, true);
+    }
+
+    private static void handleRecipeTransfer(RecipeTransferC2SPacket packet,
+                                             NetworkManager.PacketContext context, boolean fromRecipeBook) {
         context.queue(() -> {
             ServerPlayer player = (ServerPlayer) context.getPlayer();
             net.minecraft.world.inventory.AbstractContainerMenu activeMenu = player.containerMenu;
@@ -494,7 +511,8 @@ public final class ModNetworking {
             }
             Recipe<?> holder = player.getServer().getRecipeManager().byKey(packet.recipeId()).orElse(null);
 
-            if (holder == null || !(holder instanceof CraftingRecipe recipe)) {
+            if (holder == null || !(holder instanceof CraftingRecipe recipe)
+                    || (fromRecipeBook && !player.getRecipeBook().contains(holder))) {
                 return;
             }
 
@@ -532,6 +550,9 @@ public final class ModNetworking {
                     slot -> FavoritesManager.isFavorited(player, slot) || packet.isLocked(slot),
                     packet.maxTransfer());
 
+            boolean showPreview = !result.isComplete() && fromRecipeBook
+                    && CraftFromNearbyLogic.clearGridForPreview(player, craftSlots,
+                            slot -> FavoritesManager.isFavorited(player, slot) || packet.isLocked(slot));
             activeMenu.broadcastChanges();
 
             if (result.isComplete()) {
@@ -539,6 +560,8 @@ public final class ModNetworking {
                         Component.translatable("quickstackcraft.message.craft_ready",
                                 result.placed()),
                         true);
+            } else if (showPreview) {
+                player.connection.send(new ClientboundPlaceGhostRecipePacket(activeMenu.containerId, holder));
             } else {
                 player.displayClientMessage(
                         Component.translatable("quickstackcraft.message.craft_no_ingredients"),
